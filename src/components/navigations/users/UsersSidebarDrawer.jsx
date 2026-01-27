@@ -43,7 +43,7 @@ const UsersSidebarDrawer = ({ isOpen, onClose }) => {
         <DrawerCloseButton />
         <DrawerHeader bg="gray.800">
           <Heading size="md" color="white">
-            Stock Mgt. | SAD
+            Visitor Pass | SAD
           </Heading>
         </DrawerHeader>
 

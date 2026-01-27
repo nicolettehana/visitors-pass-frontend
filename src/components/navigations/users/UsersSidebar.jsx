@@ -55,7 +55,7 @@ const UsersSidebar = ({ profile }) => {
             }
           >
             <Heading size="md" color="white">
-              Stock Mgt. | SAD
+              Visitor Pass | SAD
             </Heading>
           </Link>
         </Box>

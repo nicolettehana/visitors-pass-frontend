@@ -36,6 +36,7 @@ import PurchaseRoutes from "./components/routes/PurchaseRoutes";
 import { AuthProvider } from "./components/auth/authContext";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import IssueRoutes from "./components/routes/IssueRoutes";
+import CreateRegistrationPage from "./pages/sad/registration/CreateRegistrationPage";
 
 const App = () => {
   return (
@@ -78,6 +79,7 @@ const App = () => {
           <Route path="category" element={<CategoryPage />} />
           <Route path="ledger" element={<LedgerPage />} />
           <Route path="units" element={<UnitsPage />} />
+          <Route path="register" element={<CreateRegistrationPage />} />
           <Route
             path="firms/add-approved-firm"
             element={<AddApprovedFirmsPage />}

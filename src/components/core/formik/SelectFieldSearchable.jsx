@@ -8,7 +8,7 @@ const SelectFieldSearchable = ({
   label,
   isRequired = true,
   placeholder,
-  disabled = false, // add this
+  disabled = false,
   options = [],
 }) => {
   return (
@@ -22,7 +22,7 @@ const SelectFieldSearchable = ({
             isRequired={isRequired}
             isInvalid={meta.error && meta.touched}
           >
-            <FormLabel htmlFor={name}>{label}</FormLabel>
+            <FormLabel htmlFor={name} fontSize="sm">{label}</FormLabel>
 
             {/* 🔥 React Select replaces Chakra Select */}
             <ReactSelect
