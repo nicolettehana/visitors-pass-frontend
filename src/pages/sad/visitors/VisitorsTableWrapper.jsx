@@ -40,7 +40,7 @@ import { useNavigate } from "react-router-dom";
 import { Label } from "recharts";
 import { getCategoryColorScheme } from "../../../components/core/CategoryColors";
 
-const ItemsTableWrapper = ({
+const VisitorsTableWrapper = ({
   isEstate = true,
   query,
   searchText,
@@ -131,10 +131,8 @@ const ItemsTableWrapper = ({
           </Box>
 
           <VStack>
-            <Heading size="md">No items in inventory</Heading>
-            <Text color="body" textAlign="center">
-              It seems you haven't added any items yet.
-            </Text>
+            <Heading size="md">No data</Heading>
+            
           </VStack>
         </VStack>
       </Center>
@@ -149,9 +147,12 @@ const ItemsTableWrapper = ({
           <Thead>
             <Tr>
               <Th>Sl. No.</Th>
-              <Th>Item</Th>
-              <Th>Category</Th>
-              <Th>Balance</Th>
+              <Th>Applicant's Name</Th>
+              <Th>No. of Visitors</Th>
+              <Th>Mobile no.</Th>
+              <Th>Address</Th>
+              <Th>Purpose</Th>
+              <Th>Date & Time of Visit</Th>
               {/* <Th>Actions</Th> */}
             </Tr>
           </Thead>
@@ -178,59 +179,19 @@ const ItemsTableWrapper = ({
                       isLoaded={!query.isPending}
                       fadeDuration={index}
                     >
-                      {row?.name}
-                      {row?.subItems.map((subItem, i) => (
-                        <Box key={i} mb={1}>
-                          ({String.fromCharCode(97 + i)}) {subItem.name}
-                        </Box>
-                      ))}
+                      name
                     </SkeletonText>
                   </Td>
                   <Td>
-                    <SkeletonText
-                      noOfLines={1}
-                      isLoaded={!query.isPending}
-                      fadeDuration={index}
-                    >
-                      <Badge
-                        colorScheme={getCategoryColorScheme(row?.category.code)}
-                      >
-                        {row?.category.name}
-                      </Badge>
-                    </SkeletonText>
+                    no of visitors
                   </Td>
                   <Td>
-                    <SkeletonText
-                      noOfLines={1}
-                      isLoaded={!query.isPending}
-                      fadeDuration={index}
-                    >
-                      {row?.subItems?.length == 0 && (row?.balance || 0)}
-                      {row?.subItems?.length > 0 && "\u00A0"}
-                      {row?.subItems.map((subItem, i) => (
-                        <Box key={i} mb={1}>
-                          {subItem.balance || 0}
-                          {/* ({String.fromCharCode(97 + i)}) */}
-                        </Box>
-                      ))}
-                    </SkeletonText>
+                    mobile no
                   </Td>
-
-                  {/* <Td>
-                    <ButtonGroup variant="outline" isAttached={true}>
-                      {isEstate && (
-                        <Button
-                          onClick={() => {
-                            navigate("/est/quarters/update", {
-                              state: { rowState: row },
-                            });
-                          }}
-                        >
-                          Edit
-                        </Button>
-                      )}
-                    </ButtonGroup>
-                  </Td> */}
+                  <Td>Hey</Td>
+                  <Td>Hey</Td>
+                  <Td>Hey</Td>
+                
                 </Tr>
               );
             })}
@@ -248,4 +209,4 @@ const ItemsTableWrapper = ({
   );
 };
 
-export default ItemsTableWrapper;
+export default VisitorsTableWrapper;

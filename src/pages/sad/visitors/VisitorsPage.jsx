@@ -3,39 +3,44 @@ import Main from "../../../components/core/semantics/Main";
 import Section from "../../../components/core/semantics/Section";
 import {
   Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
   Container,
   HStack,
   Stack,
   SimpleGrid,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useFetchCategories } from "../../../hooks/masterQueries";
-import { useFetchItemCategoryStats } from "../../../hooks/masterQueries";
 import {
   useFetchItemsByType,
   useExportItems,
 } from "../../../hooks/itemQueries";
-import { MdOutlineAddCircleOutline } from "react-icons/md";
-import ItemsTableWrapper from "./ItemsTableWrapper";
-import CategoriesFilter from "../../../components/filter/CategoriesFilter";
+import VisitorsTableWrapper from "./VisitorsTableWrapper";
 import SearchInput from "../../../components/core/SearchInput";
 import { useDebounce } from "use-debounce";
 import { PageSizing } from "../../../components/core/Table";
-import FirmCategoryStats from "../../../components/stats/FirmCategoryStats";
 import { useNavigate } from "react-router-dom";
-import StatCard2 from "../../../components/core/theme/StatCard2";
-import { FaFileExport } from "react-icons/fa";
+import { FaFileDownload } from "react-icons/fa";
 import CreateItemsModal from "./CreateItemsModal";
 import { useAuth } from "../../../components/auth/useAuth";
 import { hasPermission } from "../../../components/auth/permissions";
+import DateFilter from "../../../components/filter/DateFilter";
+import dayjs from "dayjs";
 
 const VisitorsPage = () => {
   // States
   const [searchText, setSearchText] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [status, setStatus] = useState("all");
   const [categoryCode, setCategoryCode] = useState("");
+  const [startDate, setStartDate] = useState(
+      dayjs().subtract(2, "months").startOf("M").format("YYYY-MM-DD")
+    );
+    const [endDate, setEndDate] = useState(
+      dayjs().startOf("day").format("YYYY-MM-DD")
+    );
   const { role } = useAuth();
 
   // Hooks
@@ -43,8 +48,6 @@ const VisitorsPage = () => {
   const navigate = useNavigate();
 
   // Queries
-  const categoryQuery = useFetchCategories();
-  const itemCategoryStatsQuery = useFetchItemCategoryStats();
   const itemsByTypeQuery = useFetchItemsByType(
     categoryCode === "" ? null : categoryCode,
     searchValue,
@@ -87,26 +90,6 @@ const VisitorsPage = () => {
           isOpen={createItemDisclosure.isOpen}
           onClose={createItemDisclosure.onClose}
         />
-        <Section>
-          <Container maxW="100%" pl={10} pr={10}>
-            <SimpleGrid minChildWidth="130px" spacing={4}>
-              {itemCategoryStatsQuery?.data?.data.byCategory.map((c) => (
-                <StatCard2
-                  key={c.categoryCode}
-                  title={c.category}
-                  value={c.totalFirms}
-                  categoryCode={c.categoryCode}
-                />
-              ))}
-              <StatCard2
-                key={"total"}
-                title={"Total"}
-                value={itemCategoryStatsQuery?.data?.data.total}
-                categoryCode={""}
-              />
-            </SimpleGrid>
-          </Container>
-        </Section>
 
         <Section>
           <Container minW="full">
@@ -114,33 +97,27 @@ const VisitorsPage = () => {
               {/* Filter */}
               <HStack justifyContent="space-between" spacing={2}>
                 <HStack>
-                  <CategoriesFilter
-                    categoryCode={categoryCode}
-                    setCategoryCode={setCategoryCode}
+                  <DateFilter
+                    fromDate={startDate}
+                    setFromDate={setStartDate}
+                    toDate={endDate}
+                    setToDate={setEndDate}
                     setPageNumber={setPageNumber}
-                    query={categoryQuery}
-                    stockType="S"
                   />
+                  
                 </HStack>
 
                 <HStack>
-                  {hasPermission(role, "canAddItem") && (<Button
-                    variant="brand"
-                    leftIcon={<MdOutlineAddCircleOutline />}
-                    onClick={createItemDisclosure.onOpen}
-                  >
-                    Add New Item
-                  </Button>)}
+                  <Menu>
+                    <MenuButton as={Button} leftIcon={<FaFileDownload />}>Download</MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={() => {
+                      handleExport();
+                    }}>Excel</MenuItem>
+                      <MenuItem>PDF</MenuItem>
+                    </MenuList>
+                  </Menu>
                   {/* <Button
-                    variant="brand"
-                    leftIcon={<MdOutlineAddCircleOutline />}
-                    onClick={() => {
-                      navigate("/sad/items/create");
-                    }}
-                  >
-                    Add New Item
-                  </Button> */}
-                  {hasPermission(role, "canExportItems") && (<Button
                     variant="brand"
                     leftIcon={<FaFileExport />}
                     onClick={() => {
@@ -148,7 +125,7 @@ const VisitorsPage = () => {
                     }}
                   >
                     Export to Excel
-                  </Button>)}
+                  </Button> */}
                 </HStack>
               </HStack>
 
@@ -168,7 +145,7 @@ const VisitorsPage = () => {
               </HStack>
 
               {/* Table */}
-              <ItemsTableWrapper
+              <VisitorsTableWrapper
                 query={itemsByTypeQuery}
                 searchText={searchText}
                 pageNumber={pageNumber}
