@@ -17,6 +17,8 @@ import {
   useFetchItemsByType,
   useExportItems,
 } from "../../../hooks/itemQueries";
+
+import { useFetchVisitors } from "../../../hooks/visitorQueries";
 import VisitorsTableWrapper from "./VisitorsTableWrapper";
 import SearchInput from "../../../components/core/SearchInput";
 import { useDebounce } from "use-debounce";
@@ -36,11 +38,11 @@ const VisitorsPage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [categoryCode, setCategoryCode] = useState("");
   const [startDate, setStartDate] = useState(
-      dayjs().subtract(2, "months").startOf("M").format("YYYY-MM-DD")
-    );
-    const [endDate, setEndDate] = useState(
-      dayjs().startOf("day").format("YYYY-MM-DD")
-    );
+    dayjs().subtract(2, "months").startOf("M").format("YYYY-MM-DD"),
+  );
+  const [endDate, setEndDate] = useState(
+    dayjs().startOf("day").format("YYYY-MM-DD"),
+  );
   const { role } = useAuth();
 
   // Hooks
@@ -48,11 +50,13 @@ const VisitorsPage = () => {
   const navigate = useNavigate();
 
   // Queries
-  const itemsByTypeQuery = useFetchItemsByType(
-    categoryCode === "" ? null : categoryCode,
+
+  const visitorsQuery = useFetchVisitors(
     searchValue,
     pageNumber,
-    pageSize
+    pageSize,
+    startDate,
+    endDate,
   );
   const exportItemsMutation = useExportItems();
 
@@ -77,7 +81,7 @@ const VisitorsPage = () => {
           link.click();
           link.remove();
         },
-      }
+      },
     );
   };
 
@@ -104,16 +108,21 @@ const VisitorsPage = () => {
                     setToDate={setEndDate}
                     setPageNumber={setPageNumber}
                   />
-                  
                 </HStack>
 
                 <HStack>
                   <Menu>
-                    <MenuButton as={Button} leftIcon={<FaFileDownload />}>Download</MenuButton>
+                    <MenuButton as={Button} leftIcon={<FaFileDownload />}>
+                      Download
+                    </MenuButton>
                     <MenuList>
-                      <MenuItem onClick={() => {
-                      handleExport();
-                    }}>Excel</MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          handleExport();
+                        }}
+                      >
+                        Excel
+                      </MenuItem>
                       <MenuItem>PDF</MenuItem>
                     </MenuList>
                   </Menu>
@@ -146,7 +155,7 @@ const VisitorsPage = () => {
 
               {/* Table */}
               <VisitorsTableWrapper
-                query={itemsByTypeQuery}
+                query={visitorsQuery}
                 searchText={searchText}
                 pageNumber={pageNumber}
                 setPageNumber={setPageNumber}

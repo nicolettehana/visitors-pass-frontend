@@ -4,6 +4,7 @@ import * as yup from "yup";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
+  Spinner,
   Button,
   HStack,
   VStack,
@@ -18,6 +19,13 @@ import {
   FormControl,
   Input,
   FormErrorMessage,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import InputField from "../../components/core/formik/InputField";
 import { useFetchItemsList } from "../../hooks/itemQueries";
@@ -42,8 +50,36 @@ const getCameras = async () => {
 };
 
 const RegistrationForm = () => {
-  const [selectedCategoryCode, setSelectedCategoryCode] = useState("All");
-  const [purchaseDate, setPurchaseDate] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfBlob, setPdfBlob] = useState(null);
+
+  const handleDownload = () => {
+    if (!pdfUrl) return;
+    const link = document.createElement("a");
+    link.href = pdfUrl;
+    link.download = `visitor-pass-${dayjs().format("YYYYMMDD-HHmm")}.pdf`;
+    link.click();
+  };
+
+  const handlePrint = () => {
+    if (!pdfUrl) return;
+    const printWindow = window.open(pdfUrl, "_blank");
+    if (printWindow) {
+      printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+      };
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        window.URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
 
   const indianStates = [
     "Andhra Pradesh",
@@ -96,22 +132,11 @@ const RegistrationForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const categoryQuery = useFetchCategories();
-  const unitQuery = useFetchUnits();
-  const firmsListQuery = useFetchFirmsList(purchaseDate);
-  const itemsQuery = useFetchItemsList(selectedCategoryCode);
-  const items = itemsQuery?.data?.data || [];
-
-  const allItemsQuery = useFetchItemsList("All");
-  const allItems = allItemsQuery?.data?.data || [];
-
-  const unitsRatesQuery = useFetchUnitsRates("2025-01-01");
-
   const createRegistration = useCreateRegistration(
     (response) => {
       queryClient.invalidateQueries({ queryKey: ["visitors"] });
       //navigate("/sad/purchase");
-      navigate(-1);
+      //navigate(-1);
       toast({
         isClosable: true,
         duration: 3000,
@@ -172,10 +197,9 @@ const RegistrationForm = () => {
       ),
   });
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values, { resetForm }) => {
     const formData = new FormData();
 
-    // build visitor JSON (NO photo here)
     const visitor = {
       name: values.name,
       noOfVisitors: values.noOfVisitors,
@@ -188,25 +212,72 @@ const RegistrationForm = () => {
       visitDateTime: dayjs(values.dateTime).format("YYYY-MM-DDTHH:mm:ss"),
     };
 
-    // must be STRING
     formData.append(
       "visitor",
-      new Blob([JSON.stringify(visitor)], {
-        type: "application/json",
-      }),
+      new Blob([JSON.stringify(visitor)], { type: "application/json" }),
     );
 
-    // file part
     formData.append("photo", values.photo);
 
-    createRegistration.mutate(formData);
+    try {
+      const blobResponse = await createRegistration.mutateAsync(formData);
+      const blob = blobResponse;
+
+      const url = window.URL.createObjectURL(blob);
+
+      setPdfBlob(blob);
+      setPdfUrl(url);
+      resetForm();
+      onOpen();
+
+      toast({
+        title: "Visitor Registered",
+        description: "Visitor pass generated successfully",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+        position: "top-right",
+      });
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: error?.response?.data?.detail || "Something went wrong",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
   };
 
   // const onSubmit = (values) => {
-  //   const formData = { ...values };
-  //   console.log(formData);
-  //   createPurchase.mutate(formData);
-  //   //createRate.mutate(formData);
+  //   const formData = new FormData();
+
+  //   // build visitor JSON (NO photo here)
+  //   const visitor = {
+  //     name: values.name,
+  //     noOfVisitors: values.noOfVisitors,
+  //     state: values.state,
+  //     address: values.address,
+  //     purpose: values.purpose,
+  //     purposeDetails: values.purposeDetails,
+  //     mobileNo: values.mobileNo,
+  //     email: values.email,
+  //     visitDateTime: dayjs(values.dateTime).format("YYYY-MM-DDTHH:mm:ss"),
+  //   };
+
+  //   // must be STRING
+  //   formData.append(
+  //     "visitor",
+  //     new Blob([JSON.stringify(visitor)], {
+  //       type: "application/json",
+  //     }),
+  //   );
+
+  //   // file part
+  //   formData.append("photo", values.photo);
+
+  //   createRegistration.mutate(formData);
   // };
 
   return (
@@ -219,6 +290,77 @@ const RegistrationForm = () => {
       {(formik) => {
         return (
           <Stack as={Form} spacing={8}>
+            <Modal
+              isOpen={isOpen}
+              onClose={() => {
+                onClose();
+                if (pdfUrl) {
+                  window.URL.revokeObjectURL(pdfUrl);
+                  setPdfUrl(null);
+                  setPdfBlob(null);
+                }
+              }}
+              size="6xl"
+              scrollBehavior="inside"
+              closeOnOverlayClick={false}
+              isCentered
+            >
+              <ModalOverlay />
+              <ModalContent maxH="90vh">
+                <ModalHeader>Visitor Pass</ModalHeader>
+                <ModalBody p={0}>
+                  {pdfUrl ? (
+                    <iframe
+                      src={pdfUrl}
+                      title="Visitor Pass PDF"
+                      width="100%"
+                      height="620px"
+                      style={{ border: "none", backgroundColor: "#f8f9fa" }}
+                    />
+                  ) : (
+                    <Flex
+                      height="500px"
+                      align="center"
+                      justify="center"
+                      direction="column"
+                      gap={4}
+                    >
+                      <Spinner size="xl" color="blue.500" />
+                      <Text color="gray.600">
+                        Preparing your visitor pass...
+                      </Text>
+                    </Flex>
+                  )}
+                </ModalBody>
+
+                <ModalFooter gap={3}>
+                  <Button
+                    //leftIcon={<DownloadIcon />}
+                    colorScheme="blue"
+                    onClick={handleDownload}
+                    isDisabled={!pdfUrl}
+                  >
+                    Download
+                  </Button>
+
+                  <Button
+                    //leftIcon={<PrinterIcon />}
+                    colorScheme="teal"
+                    onClick={handlePrint}
+                    isDisabled={!pdfUrl}
+                  >
+                    Print
+                  </Button>
+
+                  <Spacer />
+
+                  <Button variant="ghost" onClick={onClose}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+
             {/* Top Form Fields */}
             {/* <Text fontWeight="bold" fontSize="lg">Applicant Details:</Text> */}
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
@@ -328,17 +470,16 @@ const RegistrationForm = () => {
             </SimpleGrid>
 
             {/* Submit Buttons */}
-            <HStack justifyContent="end">
-              {/* <Button variant="outline" onClick={() => navigate(-1)}>
-                Back
-              </Button> */}
+            <HStack justifyContent="flex-end" mt={6}>
               <Button
                 type="submit"
-                variant="brand"
+                colorScheme="blue"
+                size="lg"
                 isLoading={createRegistration.isPending}
-                loadingText="Saving"
+                loadingText="Generating Pass..."
+                isDisabled={createRegistration.isPending}
               >
-                Submit
+                Generate Visitor Pass
               </Button>
             </HStack>
           </Stack>

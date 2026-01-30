@@ -21,6 +21,9 @@ export const request = async ({ ...option }) => {
   }
 
   const onSuccess = (response) => {
+    if (option.responseType === "blob") {
+      return response.data;
+    }
     return response;
   };
   const onError = async (error) => {

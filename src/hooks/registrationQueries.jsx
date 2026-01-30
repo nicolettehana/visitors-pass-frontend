@@ -7,13 +7,14 @@ const createRegistration = (data) => {
     url: "/visitor",
     method: "post",
     data,
+    responseType: "blob",
   });
 };
 
 export const useCreateRegistration = (onSuccess, onError) => {
   return useMutation({
     mutationFn: createRegistration,
-    onSuccess,
+    onSuccess: (blob) => onSuccess?.({ data: blob }),
     onError,
   });
 };
