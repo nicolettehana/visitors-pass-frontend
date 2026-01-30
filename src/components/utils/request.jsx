@@ -64,6 +64,10 @@ export const request = async ({ ...option }) => {
 
     throw error;
   };
+  if (option.data instanceof FormData) {
+    // Let Axios set multipart headers automatically
+    delete client.defaults.headers.common["Content-Type"];
+  }
 
   return await client(option).then(onSuccess).catch(onError);
 };

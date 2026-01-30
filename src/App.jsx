@@ -37,6 +37,7 @@ import { AuthProvider } from "./components/auth/authContext";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import IssueRoutes from "./components/routes/IssueRoutes";
 import CreateRegistrationPage from "./pages/sad/registration/CreateRegistrationPage";
+import VisitorsPage from "./pages/sad/visitors/VisitorsPage";
 
 const App = () => {
   return (
@@ -80,6 +81,7 @@ const App = () => {
           <Route path="ledger" element={<LedgerPage />} />
           <Route path="units" element={<UnitsPage />} />
           <Route path="register" element={<CreateRegistrationPage />} />
+          <Route path="visitors" element={<VisitorsPage />} />
           <Route
             path="firms/add-approved-firm"
             element={<AddApprovedFirmsPage />}

@@ -27,7 +27,7 @@ import {
   useFetchUnitsRates,
 } from "../../hooks/masterQueries";
 import { useFetchFirmsList } from "../../hooks/firmQueries";
-import { useCreatePurchase } from "../../hooks/purchaseQueries";
+import { useCreateRegistration } from "../../hooks/registrationQueries";
 import SelectField from "../../components/core/formik/SelectField";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -107,9 +107,9 @@ const RegistrationForm = () => {
 
   const unitsRatesQuery = useFetchUnitsRates("2025-01-01");
 
-  const createPurchase = useCreatePurchase(
+  const createRegistration = useCreateRegistration(
     (response) => {
-      queryClient.invalidateQueries({ queryKey: ["purchase"] });
+      queryClient.invalidateQueries({ queryKey: ["visitors"] });
       //navigate("/sad/purchase");
       navigate(-1);
       toast({
@@ -118,7 +118,7 @@ const RegistrationForm = () => {
         position: "top-right",
         status: "success",
         title: "Success",
-        description: response.data.detail || "New Purchase added",
+        description: response.data.detail || "Registered",
       });
     },
     (error) => {
@@ -128,7 +128,7 @@ const RegistrationForm = () => {
         position: "top-right",
         status: "error",
         title: "Error",
-        description: error.response.data.detail || "Unable to add purchase.",
+        description: error.response.data.detail || "Unable to register.",
       });
     },
   );
@@ -173,11 +173,41 @@ const RegistrationForm = () => {
   });
 
   const onSubmit = (values) => {
-    const formData = { ...values };
-    console.log(formData);
-    createPurchase.mutate(formData);
-    //createRate.mutate(formData);
+    const formData = new FormData();
+
+    // build visitor JSON (NO photo here)
+    const visitor = {
+      name: values.name,
+      noOfVisitors: values.noOfVisitors,
+      state: values.state,
+      address: values.address,
+      purpose: values.purpose,
+      purposeDetails: values.purposeDetails,
+      mobileNo: values.mobileNo,
+      email: values.email,
+      visitDateTime: dayjs(values.dateTime).format("YYYY-MM-DDTHH:mm:ss"),
+    };
+
+    // must be STRING
+    formData.append(
+      "visitor",
+      new Blob([JSON.stringify(visitor)], {
+        type: "application/json",
+      }),
+    );
+
+    // file part
+    formData.append("photo", values.photo);
+
+    createRegistration.mutate(formData);
   };
+
+  // const onSubmit = (values) => {
+  //   const formData = { ...values };
+  //   console.log(formData);
+  //   createPurchase.mutate(formData);
+  //   //createRate.mutate(formData);
+  // };
 
   return (
     <Formik
@@ -249,12 +279,21 @@ const RegistrationForm = () => {
                 fontSize="sm"
               />
               <Field name="photo">
+                {({ field, form }) => (
+                  <PhotoInput
+                    value={field.value}
+                    onChange={(file) => form.setFieldValue("photo", file)}
+                  />
+                )}
+              </Field>
+
+              {/* <Field name="photo">
                 {({ form }) => (
                   <PhotoInput
                     onChange={(file) => form.setFieldValue("photo", file)}
                   />
                 )}
-              </Field>
+              </Field> */}
 
               {/* <Field name="photo">
                 {({ form, meta }) => (
@@ -296,7 +335,7 @@ const RegistrationForm = () => {
               <Button
                 type="submit"
                 variant="brand"
-                isLoading={createPurchase.isPending}
+                isLoading={createRegistration.isPending}
                 loadingText="Saving"
               >
                 Submit
