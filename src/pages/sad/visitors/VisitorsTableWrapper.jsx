@@ -186,7 +186,7 @@ const VisitorsTableWrapper = ({
                     no of visitors
                   </Td>
                   <Td>
-                    mobile no
+                    mobile no.
                   </Td>
                   <Td>Hey</Td>
                   <Td>Hey</Td>
