@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -14,16 +14,21 @@ import { useFetchVisitorPhoto } from "../../../hooks/visitorQueries";
 
 const VisitorPhotoModal = ({ visitorCode, isOpen, onClose }) => {
   const {
-    data: photoUrl,
+    data: blob,
     isLoading,
     error,
   } = useFetchVisitorPhoto(visitorCode);
 
-  //   useEffect(() => {
-  //     return () => {
-  //       if (photoUrl) URL.revokeObjectURL(photoUrl);
-  //     };
-  //   }, [photoUrl]);
+  const [photoUrl, setPhotoUrl] = useState(null);
+
+  useEffect(() => {
+  if (!blob) return;
+
+  const url = URL.createObjectURL(blob);
+  setPhotoUrl(url);
+
+  return () => URL.revokeObjectURL(url);
+}, [blob]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">

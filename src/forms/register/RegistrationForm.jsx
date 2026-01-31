@@ -25,6 +25,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
 import InputField from "../../components/core/formik/InputField";
@@ -80,6 +81,12 @@ const RegistrationForm = () => {
       }
     };
   }, [pdfUrl]);
+
+  useEffect(() => {
+  if (isOpen && pdfUrl) {
+    handlePrint();
+  }
+}, [isOpen, pdfUrl]);
 
   const indianStates = [
     "Andhra Pradesh",
@@ -308,6 +315,7 @@ const RegistrationForm = () => {
               <ModalOverlay />
               <ModalContent maxH="90vh">
                 <ModalHeader>Visitor Pass</ModalHeader>
+                <ModalCloseButton />
                 <ModalBody p={0}>
                   {pdfUrl ? (
                     <iframe
@@ -354,9 +362,9 @@ const RegistrationForm = () => {
 
                   <Spacer />
 
-                  <Button variant="ghost" onClick={onClose}>
+                  {/* <Button variant="ghost" onClick={onClose}>
                     Close
-                  </Button>
+                  </Button> */}
                 </ModalFooter>
               </ModalContent>
             </Modal>
@@ -421,13 +429,26 @@ const RegistrationForm = () => {
                 fontSize="sm"
               />
               <Field name="photo">
+                {({ field, form, meta }) => (
+                  <FormControl isInvalid={meta.touched && meta.error}>
+                    <FormLabel fontSize="sm">Upload Photo</FormLabel>
+                    <PhotoInput
+                      value={field.value}
+                      onChange={(file) => form.setFieldValue("photo", file)}
+                    />
+                    <FormErrorMessage>{meta.error}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              {/* <Field name="photo">
                 {({ field, form }) => (
                   <PhotoInput
                     value={field.value}
                     onChange={(file) => form.setFieldValue("photo", file)}
                   />
                 )}
-              </Field>
+              </Field> */}
 
               {/* <Field name="photo">
                 {({ form }) => (

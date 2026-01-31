@@ -40,6 +40,7 @@ import { useNavigate } from "react-router-dom";
 import { IoDocumentText } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import VisitorPhotoModal from "./VisitorPhotoModal";
+import VisitorPassModal from "./VisitorPassModal";
 
 function formatDateTime(dateTimeStr) {
   const date = new Date(dateTimeStr);
@@ -69,6 +70,8 @@ const VisitorsTableWrapper = ({
   const [rowState, setRowState] = useState({});
   const [selectedVisitorId, setSelectedVisitorId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedVisitorCode, setSelectedVisitorCode] = useState(null);
+  const [selectedVPassNo, setSelectedVPassNo] = useState(null);
 
   // Hooks
   const toast = useToast();
@@ -138,6 +141,8 @@ const VisitorsTableWrapper = ({
   if (query.isSuccess && query?.data?.data?.content?.length === 0) {
     return (
       <Center py={16}>
+        
+
         <VStack spacing={4}>
           <Box
             bg="paperSecondary"
@@ -160,6 +165,17 @@ const VisitorsTableWrapper = ({
 
   return (
     <Stack spacing={4}>
+      {selectedVisitorCode && (
+          <VisitorPassModal
+            visitorCode={selectedVisitorCode}
+            vPassNo={selectedVPassNo}
+            isOpen={isOpen}
+            onClose={() => {
+              onClose();
+              setSelectedVisitorCode(null);
+            }}
+          />
+        )}
       {selectedVisitorId && (
         <VisitorPhotoModal
           visitorCode={selectedVisitorId}
@@ -228,7 +244,14 @@ const VisitorsTableWrapper = ({
                           onOpen();
                         }}
                       ></IconButton>
-                      <IconButton icon={<IoDocumentText />}></IconButton>
+                      <IconButton
+                        icon={<IoDocumentText />}
+                        onClick={() => {
+                          setSelectedVisitorCode(row?.id);
+                          setSelectedVPassNo(row?.vpassNo);
+                          onOpen();
+                        }}
+                      ></IconButton>
                     </HStack>
                   </Td>
                 </Tr>
