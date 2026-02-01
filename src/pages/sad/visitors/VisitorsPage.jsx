@@ -88,37 +88,33 @@ const VisitorsPage = () => {
   };
 
   const handleExportVisitors = (exportFormat) => {
-  const extension = exportFormat === "PDF" ? "pdf" : "xlsx";
+    const extension = exportFormat === "PDF" ? "pdf" : "xlsx";
 
-  exportVisitorsMutation.mutate(
-    {
-      startDate,
-      endDate,
-      format: exportFormat,
-    },
-    {
-      onSuccess: (response) => {
-        const url = window.URL.createObjectURL(
-          new Blob([response.data])
-        );
-        const mimeType =
-  exportFormat === "PDF"
-    ? "application/pdf"
-    : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-const blob = new Blob([response.data], { type: mimeType });
-
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `Visitors_${startDate}-${endDate}.${extension}`;
-        link.click();
-        link.remove();
+    exportVisitorsMutation.mutate(
+      {
+        startDate,
+        endDate,
+        format: exportFormat,
       },
-    }
-  );
-};
+      {
+        onSuccess: (response) => {
+          const url = window.URL.createObjectURL(new Blob([response]));
+          const mimeType =
+            exportFormat === "PDF"
+              ? "application/pdf"
+              : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
+          const blob = new Blob([response], { type: mimeType });
+
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `Visitors_${startDate}-${endDate}.${extension}`;
+          link.click();
+          link.remove();
+        },
+      },
+    );
+  };
 
   return (
     <>
@@ -151,12 +147,12 @@ const blob = new Blob([response.data], { type: mimeType });
                       Download
                     </MenuButton>
                     <MenuList>
-                      <MenuItem
-                        onClick={() => handleExportVisitors("Excel")}
-                      >
+                      <MenuItem onClick={() => handleExportVisitors("Excel")}>
                         Excel
                       </MenuItem>
-                      <MenuItem onClick={() => handleExportVisitors("PDF")}>PDF</MenuItem>
+                      <MenuItem onClick={() => handleExportVisitors("PDF")}>
+                        PDF
+                      </MenuItem>
                     </MenuList>
                   </Menu>
                   {/* <Button
