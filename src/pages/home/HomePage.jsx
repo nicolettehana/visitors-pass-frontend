@@ -20,7 +20,7 @@ import {
 import { Link } from "react-router-dom";
 import SignInForm from "../../forms/auth/SignInForm";
 import inventoryImg from "../../assets/inventory4.png";
-import frontImg from "../../assets/front3.png"
+import frontImg from "../../assets/frontImgg.png"
 //import inventoryImg from "../../assets/inventoryy.jpg";
 import MdIcon from "../../components/core/MdIcon";
 import { useGetXsrfToken } from "../../hooks/authQueries";
@@ -30,41 +30,12 @@ const HomePage = () => {
   // const xsrfQuery = useGetXsrfToken();
 
   return (
-    <Main bg="white">
-      <Section bg="white">
+    <Main bg="red">
+      <Section bg="red">
         <Container maxW="container.xl" bg="white">
           <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={0}>
             {/* LHS */}
-            <Hide below="lg">
-              <Stack
-                spacing={4}
-                //mt={16}
-                backgroundImage={`url(${frontImg})`}
-                minH="100%"
-                backgroundSize="cover"
-                backgroundPosition="center"
-              >
-                <Stack spacing={16}>
-                  <Stack
-                    spacing={16}
-                    //backgroundImage={inventoryImg}
-                    backgroundSize="cover"
-                    backgroundPosition="center"
-                  >
-                    <Stack spacing={3} color="brand.700">
-                      <Heading size="lg">Visitor Pass System</Heading>
-                      <Text fontSize="2xl">
-                        <strong>Secretariat Administration Department</strong>{" "}
-                        <br />
-                        <Text fontSize="xl">
-                          <strong>Government Of Meghalaya</strong>
-                        </Text>
-                      </Text>
-                    </Stack>
-                  </Stack>
-                </Stack>
-              </Stack>
-            </Hide>
+            
 
             {/* RHS */}
             <Center>
@@ -85,6 +56,38 @@ const HomePage = () => {
                 </Box>
               </VStack>
             </Center>
+
+            <Hide below="lg">
+              <Stack
+                spacing={4}
+                //mt={16}
+                backgroundImage={`url(${frontImg})`}
+                minH="100%"
+                backgroundSize="cover"
+                backgroundPosition="center"
+              >
+                <Stack spacing={16}>
+                  <Stack
+                    spacing={16}
+                    //backgroundImage={inventoryImg}
+                    backgroundSize="cover"
+                    backgroundPosition="center"
+                  >
+                    <Stack spacing={3} color="lgreen.950">
+                      <Heading size="lg">Visitor e-Pass System</Heading>
+                      <Text fontSize="2xl">
+                        <strong>Secretariat Administration Department</strong>{" "}
+                        <br />
+                        <Text fontSize="xl">
+                          <strong>Government Of Meghalaya</strong>
+                        </Text>
+                      </Text>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Hide>
+            
           </SimpleGrid>
         </Container>
       </Section>

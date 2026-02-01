@@ -103,7 +103,7 @@ const PhotoInput = ({ value, onChange }) => {
       </Button>
 
       {/* 📷 Capture */}
-      <Button colorScheme="blue" onClick={onOpen} leftIcon={<FaCamera />}>
+      <Button variant="brand" onClick={onOpen} leftIcon={<FaCamera />}>
         Capture
       </Button>
 
@@ -127,7 +127,7 @@ const PhotoInput = ({ value, onChange }) => {
             <Button variant="ghost" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="green" onClick={capturePhoto}>
+            <Button variant="brand"onClick={capturePhoto} >
               Capture
             </Button>
           </ModalFooter>

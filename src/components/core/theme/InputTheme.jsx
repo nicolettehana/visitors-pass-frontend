@@ -18,10 +18,10 @@ const brand = definePartsStyle({
       },
 
       _focus: {
-        borderColor: "brand.600",
+        borderColor: "lgreen.900",
         outline: true,
         outlineWidth: 1,
-        outlineColor: "brand.600",
+        outlineColor: "lgreen.900",
         outlineOffset: 0,
       },
 
@@ -43,10 +43,10 @@ const brand = definePartsStyle({
       },
 
       _focus: {
-        borderColor: "brand.600",
+        borderColor: "lgreen.600",
         outline: true,
         outlineWidth: 1,
-        outlineColor: "brand.600",
+        outlineColor: "lgreen.600",
         outlineOffset: 0,
       },
 

@@ -143,7 +143,7 @@ const VisitorsPage = () => {
 
                 <HStack>
                   <Menu>
-                    <MenuButton as={Button} leftIcon={<FaFileDownload />}>
+                    <MenuButton as={Button} leftIcon={<FaFileDownload />} variant="brand">
                       Download
                     </MenuButton>
                     <MenuList>

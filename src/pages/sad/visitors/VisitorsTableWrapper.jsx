@@ -239,6 +239,7 @@ const VisitorsTableWrapper = ({
                     <HStack>
                       <IconButton
                         icon={<CgProfile />}
+                        variant="brand"
                         onClick={() => {
                           setSelectedVisitorId(row?.id);
                           onOpen();
@@ -246,6 +247,7 @@ const VisitorsTableWrapper = ({
                       ></IconButton>
                       <IconButton
                         icon={<IoDocumentText />}
+                        variant="brand"
                         onClick={() => {
                           setSelectedVisitorCode(row?.id);
                           setSelectedVPassNo(row?.vpassNo);

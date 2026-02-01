@@ -344,7 +344,7 @@ const RegistrationForm = () => {
                 <ModalFooter gap={3}>
                   <Button
                     //leftIcon={<DownloadIcon />}
-                    colorScheme="blue"
+                    variant="brand"
                     onClick={handleDownload}
                     isDisabled={!pdfUrl}
                   >
@@ -356,6 +356,7 @@ const RegistrationForm = () => {
                     colorScheme="teal"
                     onClick={handlePrint}
                     isDisabled={!pdfUrl}
+                    variant="brand"
                   >
                     Print
                   </Button>
@@ -494,7 +495,7 @@ const RegistrationForm = () => {
             <HStack justifyContent="flex-end" mt={6}>
               <Button
                 type="submit"
-                colorScheme="blue"
+                variant="brand"
                 size="lg"
                 isLoading={createRegistration.isPending}
                 loadingText="Generating Pass..."

@@ -21,9 +21,9 @@ import digitalImg from "../../../assets/digital.png";
 
 const GuestNavbar = ({ onOpen }) => {
   const links = [
-    { label: "Home", path: "/" },
-    { label: "Manual", path: "/manual" },
-    { label: "Contact Us", path: "/contact-us" },
+    // { label: "Home", path: "/" },
+    // { label: "Manual", path: "/manual" },
+    // { label: "Contact Us", path: "/contact-us" },
     // { label: "Privacy Policy", path: "/privacy-policy" },
   ];
 
@@ -31,7 +31,7 @@ const GuestNavbar = ({ onOpen }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <Stack>
+    <Stack pl={5}>
       <Header borderBottom="none" pos="relative">
         <HStack direction="row" justifyContent="space-between">
           {/* LHS */}
@@ -40,20 +40,20 @@ const GuestNavbar = ({ onOpen }) => {
             <HStack spacing={4}>
               <Image
                 src={meghalayaImg}
-                w={16}
-                h={16}
+                w={14}
+                h={14}
                 alt="Meghalaya Emblem"
                 rounded="full"
               />
               <Image
                 src={emblemSvg}
-                h={16}
+                h={14}
                 alt="Indian Emblem"
                 filter={useColorModeValue("none", "auto")}
                 brightness={0}
                 invert={1}
               />
-              <Image src={digitalImg} h={16} alt="Digital India" />{" "}
+              <Image src={digitalImg} h={14} alt="Digital India" />{" "}
             </HStack>
           </Link>
 

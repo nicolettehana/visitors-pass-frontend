@@ -84,16 +84,16 @@ const VisitorPassModal = ({ isOpen, onClose, visitorCode, vPassNo, initialBlob }
           borderTop="1px solid" // optional top border
           borderColor="gray.200"
         >
-          <Button onClick={handleDownload} isDisabled={!pdfUrl}>
+          <Button onClick={handleDownload} isDisabled={!pdfUrl} variant="brand">
             Download
           </Button>
-          <Button onClick={handlePrint} isDisabled={!pdfUrl}>
+          <Button onClick={handlePrint} isDisabled={!pdfUrl} variant="brand">
             Print
           </Button>
-          <Spacer />
+          {/* <Spacer />
           <Button variant="ghost" onClick={onClose}>
             Close
-          </Button>
+          </Button> */}
         </ModalFooter>
       </ModalContent>
     </Modal>

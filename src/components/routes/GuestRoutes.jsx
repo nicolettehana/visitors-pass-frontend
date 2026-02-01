@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import ScrollToTop from "./ScrollToTop";
 import { useFetchUsersProfile } from "../../hooks/userQueries";
+import backgroundImg from "../../assets/season.jpg"
 
 const GuestRoutes = () => {
   // Disclosures
@@ -20,7 +21,7 @@ const GuestRoutes = () => {
 
   // Hooks
   //const contianerBg = useColorModeValue("brand.300", "brand.700");
-  const contianerBg = useColorModeValue("brand.100", "white");
+  const contianerBg = useColorModeValue("zinc.100", "white");
   //const stackBg = useColorModeValue("brand.50", "brand.950");
   const stackBg = useColorModeValue("white", "white");
 
@@ -44,6 +45,9 @@ const GuestRoutes = () => {
   if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "EST")
     return <Navigate to="/est/dashboard" />;
 
+  if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "SAD")
+    return <Navigate to="/sad/register" />;
+
   if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "ADMIN")
     return <Navigate to="/admin/logs" />;
 
@@ -51,21 +55,28 @@ const GuestRoutes = () => {
     <>
       <ScrollToTop />
       <GuestNavDrawer isOpen={drawer.isOpen} onClose={drawer.onClose} />
-      <Container bg={contianerBg} w="full" maxWidth="none">
-        <Stack
-          minH="100dvh"
-          justifyContent="space-between"
-          spacing={8}
-          bg={stackBg}
-          mx={{ base: "0%", md: "5%" }}
-          px={{ base: 0, md: 4 }}
-        >
-          {/* <Stack spacing={8}> */}
-          <GuestNavbar onOpen={drawer.onOpen} />
-          <Outlet />
-          {/* </Stack> */}
-          <Footer />
-        </Stack>
+      <Container
+        bg={contianerBg}
+        w="full"
+        maxW="none"
+        h="100dvh"
+        overflow="hidden"
+      >
+        <Center h="full" p={{ base: 4, md: 12 }}>
+          <Stack
+            w="full"
+            maxW="container.xl"
+            h="full"
+            bg={stackBg}
+            borderRadius="xl"
+            boxShadow="xl"
+            justify="space-between"
+          >
+            <GuestNavbar />
+            <Outlet />
+            <Footer />
+          </Stack>
+        </Center>
       </Container>
     </>
   );
