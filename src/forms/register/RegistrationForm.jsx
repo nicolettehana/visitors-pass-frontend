@@ -29,13 +29,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import InputField from "../../components/core/formik/InputField";
-import { useFetchItemsList } from "../../hooks/itemQueries";
-import {
-  useFetchCategories,
-  useFetchUnits,
-  useFetchUnitsRates,
-} from "../../hooks/masterQueries";
-import { useFetchFirmsList } from "../../hooks/firmQueries";
+
 import { useCreateRegistration } from "../../hooks/registrationQueries";
 import SelectField from "../../components/core/formik/SelectField";
 import { useQueryClient } from "@tanstack/react-query";
@@ -44,6 +38,7 @@ import SelectFieldSearchable from "../../components/core/formik/SelectFieldSearc
 import dayjs from "dayjs";
 import { MdHorizontalRule } from "react-icons/md";
 import PhotoInput from "./PhotoInput";
+import { IoMdSend } from "react-icons/io";
 
 const getCameras = async () => {
   const devices = await navigator.mediaDevices.enumerateDevices();
@@ -431,7 +426,7 @@ const RegistrationForm = () => {
               />
               <Field name="photo">
                 {({ field, form, meta }) => (
-                  <FormControl isInvalid={meta.touched && meta.error}>
+                  <FormControl isRequired isInvalid={meta.touched && meta.error}>
                     <FormLabel fontSize="sm">Upload Photo</FormLabel>
                     <PhotoInput
                       value={field.value}
@@ -500,6 +495,7 @@ const RegistrationForm = () => {
                 isLoading={createRegistration.isPending}
                 loadingText="Generating Pass..."
                 isDisabled={createRegistration.isPending}
+                rightIcon={<IoMdSend />}
               >
                 Generate Visitor Pass
               </Button>

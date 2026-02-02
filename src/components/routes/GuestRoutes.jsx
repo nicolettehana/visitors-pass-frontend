@@ -13,7 +13,6 @@ import {
 } from "@chakra-ui/react";
 import ScrollToTop from "./ScrollToTop";
 import { useFetchUsersProfile } from "../../hooks/userQueries";
-import backgroundImg from "../../assets/season.jpg"
 
 const GuestRoutes = () => {
   // Disclosures

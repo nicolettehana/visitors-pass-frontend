@@ -13,10 +13,7 @@ import {
   SimpleGrid,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  useFetchItemsByType,
-  useExportItems,
-} from "../../../hooks/itemQueries";
+
 import { useExportVisitors } from "../../../hooks/visitorQueries";
 import { useFetchVisitors } from "../../../hooks/visitorQueries";
 import VisitorsTableWrapper from "./VisitorsTableWrapper";
@@ -25,9 +22,7 @@ import { useDebounce } from "use-debounce";
 import { PageSizing } from "../../../components/core/Table";
 import { useNavigate } from "react-router-dom";
 import { FaFileDownload } from "react-icons/fa";
-import CreateItemsModal from "./CreateItemsModal";
 import { useAuth } from "../../../components/auth/useAuth";
-import { hasPermission } from "../../../components/auth/permissions";
 import DateFilter from "../../../components/filter/DateFilter";
 import dayjs from "dayjs";
 
@@ -59,34 +54,12 @@ const VisitorsPage = () => {
     startDate,
     endDate,
   );
-  const exportItemsMutation = useExportItems();
   const exportVisitorsMutation = useExportVisitors();
 
   //Disclosures
-  const createItemDisclosure = useDisclosure();
 
   //Handlers
-  const handleExport = () => {
-    exportItemsMutation.mutate(
-      {
-        category: categoryCode === "" ? "" : categoryCode,
-      },
-      {
-        onSuccess: (response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", `items_${categoryCode || "all"}.xlsx`);
-
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        },
-      },
-    );
-  };
-
+  
   const handleExportVisitors = (exportFormat) => {
     const extension = exportFormat === "PDF" ? "pdf" : "xlsx";
 
@@ -120,11 +93,6 @@ const VisitorsPage = () => {
     <>
       {/* Main */}
       <Main>
-        {/* Modals */}
-        <CreateItemsModal
-          isOpen={createItemDisclosure.isOpen}
-          onClose={createItemDisclosure.onClose}
-        />
 
         <Section>
           <Container minW="full">

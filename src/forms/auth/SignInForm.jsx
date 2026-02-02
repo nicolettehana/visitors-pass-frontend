@@ -22,7 +22,6 @@ import {
 } from "../../hooks/authQueries";
 import { encryptRSA } from "../../components/utils/security";
 import CaptchaImage from "../../components/common/CaptchaImage";
-import OTPForm from "./OTPForm";
 import { useAuthContext } from "../../components/auth/authContext";
 
 const SignInForm = () => {

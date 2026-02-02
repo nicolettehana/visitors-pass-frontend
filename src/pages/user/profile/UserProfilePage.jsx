@@ -78,8 +78,8 @@ const UserProfilePage = () => {
                 >
                   <AvatarBadge
                     boxSize="1.25rem"
-                    bg="brand.600"
-                    borderColor={useColorModeValue("brand.200", "brand.800")}
+                    bg="lgreen.900"
+                    borderColor={useColorModeValue("lgreen.200", "lgreen.800")}
                   />
                 </Avatar>
                 <VStack spacing={0}>
