@@ -9,9 +9,11 @@ import {
   MenuItem,
   Container,
   HStack,
+  VStack,
   Stack,
   SimpleGrid,
   useDisclosure,
+  Heading,
 } from "@chakra-ui/react";
 
 import { useExportVisitors } from "../../../hooks/visitorQueries";
@@ -25,6 +27,7 @@ import { FaFileDownload } from "react-icons/fa";
 import { useAuth } from "../../../components/auth/useAuth";
 import DateFilter from "../../../components/filter/DateFilter";
 import dayjs from "dayjs";
+import { useFetchUsersProfile } from "../../../hooks/userQueries";
 
 const VisitorsPage = () => {
   // States
@@ -47,6 +50,8 @@ const VisitorsPage = () => {
 
   // Queries
 
+  const profileQuery = useFetchUsersProfile();
+
   const visitorsQuery = useFetchVisitors(
     searchValue,
     pageNumber,
@@ -59,7 +64,7 @@ const VisitorsPage = () => {
   //Disclosures
 
   //Handlers
-  
+
   const handleExportVisitors = (exportFormat) => {
     const extension = exportFormat === "PDF" ? "pdf" : "xlsx";
 
@@ -93,13 +98,12 @@ const VisitorsPage = () => {
     <>
       {/* Main */}
       <Main>
-
         <Section>
           <Container minW="full">
             <Stack spacing={4}>
               {/* Filter */}
               <HStack justifyContent="space-between" spacing={2}>
-                <HStack>
+                <VStack spacing={7}>
                   <DateFilter
                     fromDate={startDate}
                     setFromDate={setStartDate}
@@ -107,11 +111,18 @@ const VisitorsPage = () => {
                     setToDate={setEndDate}
                     setPageNumber={setPageNumber}
                   />
-                </HStack>
+                  <Heading size="sm">
+                    {profileQuery?.data?.data?.office}
+                  </Heading>
+                </VStack>
 
                 <HStack>
                   <Menu>
-                    <MenuButton as={Button} leftIcon={<FaFileDownload />} variant="brand">
+                    <MenuButton
+                      as={Button}
+                      leftIcon={<FaFileDownload />}
+                      variant="brand"
+                    >
                       Download
                     </MenuButton>
                     <MenuList>

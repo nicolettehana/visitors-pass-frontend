@@ -51,7 +51,6 @@ const fetchVisitorPhoto = async (visitorCode) => {
   return response;
 };
 
-
 export const useFetchVisitorPhoto = (visitorCode, enabled = true) => {
   return useQuery({
     queryKey: ["visitorPhoto", visitorCode],
@@ -63,7 +62,7 @@ export const useFetchVisitorPhoto = (visitorCode, enabled = true) => {
 };
 
 // GET: Fetch visitor pass
-const fetchVisitorPass= async (visitorCode) => {
+const fetchVisitorPass = async (visitorCode) => {
   if (!visitorCode) {
     return null;
   }
@@ -77,7 +76,6 @@ const fetchVisitorPass= async (visitorCode) => {
   return response;
 };
 
-
 export const useFetchVisitorPass = (visitorCode, enabled = true) => {
   return useQuery({
     queryKey: ["visitorPass", visitorCode],
@@ -87,37 +85,6 @@ export const useFetchVisitorPass = (visitorCode, enabled = true) => {
     cacheTime: Infinity,
   });
 };
-
-
-// GET: Export Visitors
-// const exportVisitors = (
-//   format,
-//   startDate,
-//   endDate,
-// ) => {
-//   return request({
-//     url: `/visitor/export?format=${format}&startDate=${startDate}&endDate=${endDate}`,
-//     method: "get",
-//   });
-// };
-
-// export const useExportVisitors = (
-//   format,
-//   startDate,
-//   endDate,
-// ) => {
-//   return useMutation({
-//     queryKey: [
-//       "export-visitors",
-//       format,
-//       startDate,
-//       endDate,
-//     ],
-//     queryFn: () =>
-//       exportVisitors(format, startDate, endDate),
-//     //enabled: !!startDate && !!endDate,
-//   });
-// };
 
 // GET: Export Visitors
 const exportVisitors = ({ format, startDate, endDate }) => {
@@ -132,5 +99,27 @@ const exportVisitors = ({ format, startDate, endDate }) => {
 export const useExportVisitors = () => {
   return useMutation({
     mutationFn: exportVisitors,
+  });
+};
+
+// GET: Fetch visitor information
+const fetchVisitorInformation = async (mobileNo) => {
+  if (!mobileNo) {
+    return null;
+  }
+
+  const response = await request({
+    url: `/visitor/get-info?mobileNo=${mobileNo}`,
+    method: "get",
+  });
+
+  return response;
+};
+
+export const useFetchVisitorInformation = (mobileNo, enabled = true) => {
+  return useQuery({
+    queryKey: ["visitorInformation", mobileNo],
+    queryFn: () => fetchVisitorInformation(mobileNo),
+    enabled: !!mobileNo && enabled && mobileNo.length === 10,
   });
 };

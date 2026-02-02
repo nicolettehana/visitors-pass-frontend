@@ -27,6 +27,7 @@ import {
   ModalFooter,
   ModalCloseButton,
   useDisclosure,
+  Heading,
 } from "@chakra-ui/react";
 import InputField from "../../components/core/formik/InputField";
 
@@ -39,16 +40,14 @@ import dayjs from "dayjs";
 import { MdHorizontalRule } from "react-icons/md";
 import PhotoInput from "./PhotoInput";
 import { IoMdSend } from "react-icons/io";
-
-const getCameras = async () => {
-  const devices = await navigator.mediaDevices.enumerateDevices();
-  return devices.filter((d) => d.kind === "videoinput");
-};
+import { useFetchVisitorInformation } from "../../hooks/visitorQueries";
+import { useFetchUsersProfile } from "../../hooks/userQueries";
 
 const RegistrationForm = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [pdfUrl, setPdfUrl] = useState(null);
   const [pdfBlob, setPdfBlob] = useState(null);
+  const [mobileNo, setMobileNo] = useState(null);
 
   const handleDownload = () => {
     if (!pdfUrl) return;
@@ -78,10 +77,10 @@ const RegistrationForm = () => {
   }, [pdfUrl]);
 
   useEffect(() => {
-  if (isOpen && pdfUrl) {
-    handlePrint();
-  }
-}, [isOpen, pdfUrl]);
+    if (isOpen && pdfUrl) {
+      handlePrint();
+    }
+  }, [isOpen, pdfUrl]);
 
   const indianStates = [
     "Andhra Pradesh",
@@ -134,6 +133,10 @@ const RegistrationForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const profileQuery = useFetchUsersProfile();
+
+  const visitorInfoQuery = useFetchVisitorInformation(mobileNo);
+
   const createRegistration = useCreateRegistration(
     (response) => {
       queryClient.invalidateQueries({ queryKey: ["visitors"] });
@@ -163,7 +166,7 @@ const RegistrationForm = () => {
   const initialValues = {
     name: "",
     noOfVisitors: "",
-    state: "",
+    state: "Meghalaya",
     address: "",
     purpose: "",
     purposeDetails: "",
@@ -175,14 +178,17 @@ const RegistrationForm = () => {
 
   const validationSchema = yup.object({
     name: yup.string().required("Name is required"),
-    noOfVisitors: yup.number().required("No. of visitors is required"),
+    noOfVisitors: yup
+      .number()
+      .typeError("Please enter a valid number")
+      .required("No. of visitors is required"),
     state: yup.string().required("State is required"),
     address: yup.string().required("Address is required"),
     purpose: yup.string().required("Purpose is required"),
     purposeDetails: yup.string("Purpose Details/Name is required"),
     mobileNo: yup
       .string()
-      .matches(/^[0-9]{10,15}$/, "Invalid mobile number")
+      .matches(/^[0-9]{10}$/, "Invalid mobile number (10 digits)")
       .required("Mobile no. is required"),
     email: yup.string().email("Invalid email address"),
     dateTime: yup
@@ -252,36 +258,6 @@ const RegistrationForm = () => {
     }
   };
 
-  // const onSubmit = (values) => {
-  //   const formData = new FormData();
-
-  //   // build visitor JSON (NO photo here)
-  //   const visitor = {
-  //     name: values.name,
-  //     noOfVisitors: values.noOfVisitors,
-  //     state: values.state,
-  //     address: values.address,
-  //     purpose: values.purpose,
-  //     purposeDetails: values.purposeDetails,
-  //     mobileNo: values.mobileNo,
-  //     email: values.email,
-  //     visitDateTime: dayjs(values.dateTime).format("YYYY-MM-DDTHH:mm:ss"),
-  //   };
-
-  //   // must be STRING
-  //   formData.append(
-  //     "visitor",
-  //     new Blob([JSON.stringify(visitor)], {
-  //       type: "application/json",
-  //     }),
-  //   );
-
-  //   // file part
-  //   formData.append("photo", values.photo);
-
-  //   createRegistration.mutate(formData);
-  // };
-
   return (
     <Formik
       enableReinitialize
@@ -290,8 +266,21 @@ const RegistrationForm = () => {
       onSubmit={onSubmit}
     >
       {(formik) => {
+        useEffect(() => {
+          if (visitorInfoQuery.data) {
+            const lastVisit = visitorInfoQuery?.data?.data;
+
+            if (lastVisit.name) formik.setFieldValue("name", lastVisit.name);
+            if (lastVisit.address)
+              formik.setFieldValue("address", lastVisit.address);
+            if (lastVisit.state) formik.setFieldValue("state", lastVisit.state);
+            if (lastVisit.email) formik.setFieldValue("email", lastVisit.email);
+          }
+        }, [visitorInfoQuery.data]);
+
         return (
           <Stack as={Form} spacing={8}>
+            <Heading size="sm">{profileQuery?.data?.data?.office}</Heading>
             <Modal
               isOpen={isOpen}
               onClose={() => {
@@ -410,6 +399,12 @@ const RegistrationForm = () => {
                 name="mobileNo"
                 label="Mobile No."
                 placeholder="Enter Mobile no."
+                onChange={(e) => {
+                  let val = e.target.value.replace(/\D/g, ""); // only digits
+                  if (val.length > 10) val = val.slice(0, 10);
+                  formik.setFieldValue("mobileNo", val);
+                  setMobileNo(e.target.value);
+                }}
               />
               <InputField
                 name="email"
@@ -426,8 +421,11 @@ const RegistrationForm = () => {
               />
               <Field name="photo">
                 {({ field, form, meta }) => (
-                  <FormControl isRequired isInvalid={meta.touched && meta.error}>
-                    <FormLabel fontSize="sm">Upload Photo</FormLabel>
+                  <FormControl
+                    isRequired
+                    isInvalid={meta.touched && meta.error}
+                  >
+                    <FormLabel fontSize="sm">Photo</FormLabel>
                     <PhotoInput
                       value={field.value}
                       onChange={(file) => form.setFieldValue("photo", file)}

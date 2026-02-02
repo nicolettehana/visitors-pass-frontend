@@ -15,8 +15,6 @@ const Footer = () => {
         shadow="lg"
       >
         <VStack>
-          
-
           <VStack spacing={0}>
             <Text fontSize="xs" textAlign="center" color="lgreen.950">
               Content owned by Secretariat Administration Department, Government
@@ -24,7 +22,7 @@ const Footer = () => {
             </Text>
 
             <Text fontSize="xs" textAlign="center" color="lgreen.950">
-              Developed and hosted by National Informatics Center, Meghalaya
+              Developed and hosted by National Informatics Centre, Meghalaya
             </Text>
           </VStack>
         </VStack>

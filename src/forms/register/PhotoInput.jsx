@@ -10,7 +10,7 @@ import {
   ModalOverlay,
   ModalFooter,
   useDisclosure,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import { FaFileUpload } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
@@ -22,6 +22,14 @@ const PhotoInput = ({ value, onChange }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [preview, setPreview] = useState(null);
+
+  const [cameraError, setCameraError] = useState(null);
+  const [videoReady, setVideoReady] = useState(false);
+
+  const hasCamera = async () => {
+    const devices = await navigator?.mediaDevices?.enumerateDevices();
+    return devices.some((d) => d.kind === "videoinput");
+  };
 
   /* 🔁 Generate preview when file changes */
   useEffect(() => {
@@ -40,12 +48,33 @@ const PhotoInput = ({ value, onChange }) => {
   useEffect(() => {
     if (!isOpen) return;
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
+    setCameraError(null);
+    setVideoReady(false);
+
+    navigator?.mediaDevices
+      ?.getUserMedia({
+        video: { facingMode: "environment" },
+      })
       .then((stream) => {
+        if (!stream.getVideoTracks().length) {
+          throw new Error("NO_VIDEO_TRACK");
+        }
+
+        const video = videoRef.current;
         streamRef.current = stream;
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+          if (video.videoWidth === 0) {
+            setCameraError("Camera detected but no video feed.");
+            return;
+          }
+          video.play();
+          setVideoReady(true);
+        };
+      })
+      .catch((err) => {
+        setCameraError("No usable camera available.");
       });
 
     return () => {
@@ -103,7 +132,12 @@ const PhotoInput = ({ value, onChange }) => {
       </Button>
 
       {/* 📷 Capture */}
-      <Button variant="brand" onClick={onOpen} leftIcon={<FaCamera />}>
+      <Button
+        variant="brand"
+        onClick={onOpen}
+        leftIcon={<FaCamera />}
+        isDisabled={!hasCamera}
+      >
         Capture
       </Button>
 
@@ -119,7 +153,29 @@ const PhotoInput = ({ value, onChange }) => {
               rounded="md"
               overflow="hidden"
             >
-              <video ref={videoRef} muted playsInline style={{ width: "100%" }} />
+              <video
+                ref={videoRef}
+                muted
+                playsInline
+                autoPlay
+                style={{
+                  width: "100%",
+                  background: "#000",
+                  display: videoReady ? "block" : "none",
+                }}
+              />
+
+              {cameraError && (
+                <Box color="red.500" fontSize="sm">
+                  {cameraError}
+                </Box>
+              )}
+
+              {!videoReady && !cameraError && (
+                <Box fontSize="sm" color="gray.500">
+                  Starting camera…
+                </Box>
+              )}
             </Box>
             <canvas ref={canvasRef} hidden />
           </ModalBody>
@@ -127,7 +183,11 @@ const PhotoInput = ({ value, onChange }) => {
             <Button variant="ghost" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button variant="brand"onClick={capturePhoto} >
+            <Button
+              variant="brand"
+              onClick={capturePhoto}
+              isDisabled={!videoReady}
+            >
               Capture
             </Button>
           </ModalFooter>
