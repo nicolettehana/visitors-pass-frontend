@@ -94,7 +94,7 @@ const SignInForm = () => {
         description: error.response.data.detail,
       });
       return error;
-    }
+    },
   );
 
   // Formik
@@ -136,10 +136,14 @@ const SignInForm = () => {
     if (captchaQuery.isSuccess) {
       formikRef.current.setFieldValue(
         "captchaToken",
-        captchaQuery?.data?.data?.captchaToken
+        captchaQuery?.data?.data?.captchaToken,
       );
     }
   }, [captchaQuery?.data?.data?.captchaToken]);
+
+  useEffect(() => {
+    captchaQuery.refetch();
+  }, []);
 
   return (
     <>

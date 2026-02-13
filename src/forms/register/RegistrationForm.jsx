@@ -172,7 +172,7 @@ const RegistrationForm = () => {
     purposeDetails: "",
     mobileNo: "",
     email: "",
-    dateTime: null,
+    dateTime: dayjs().format("YYYY-MM-DDTHH:mm"),
     photo: null,
   };
 
