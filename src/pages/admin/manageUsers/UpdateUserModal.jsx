@@ -103,7 +103,7 @@ const UpdateUserModal = ({ isOpen, onClose, row }) => {
 
   // Submit handler
   const onSubmit = (values) => {
-    //console.log(values);
+    
     updateUser.mutate(values);
   };
 

@@ -17,10 +17,7 @@ const OfficeFilter = ({
   setPageNumber,
   query,
 }) => {
-  console.log("Office code: ",officeCode);
-  console.log(query?.data?.data?.find(
-    (row) => row?.officeCode === Number(officeCode))?.officeName
-  );
+  
   const office = query?.data?.data?.find(    
     (row) => row?.officeCode === Number(officeCode)
   )?.officeName;
@@ -35,7 +32,7 @@ const OfficeFilter = ({
       >
         <HStack>
           <Text>Office: </Text>
-          <Text color="red.700">{office || "Hey"}</Text>
+          <Text color="red.700">{office || "All"}</Text>
         </HStack>
       </MenuButton>
       <MenuList>

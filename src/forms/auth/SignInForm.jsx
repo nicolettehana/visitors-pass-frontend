@@ -67,7 +67,7 @@ const SignInForm = () => {
           navigate("/issue/dashboard");
           break;
         case "ASAD":
-          navigate("/asad/visitors");
+          navigate("/asad/dashboard");
           break;
         case "ADMIN":
           navigate("/admin/logs");

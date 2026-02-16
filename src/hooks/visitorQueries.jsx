@@ -158,3 +158,32 @@ export const useFetchStats = (
       fetchStats(month, year, purpose, officeCode),
   });
 };
+
+// GET: Get Purpose Stats
+const fetchPurposeStats = (
+  month,
+  year,
+  officeCode
+) => {
+  return request({
+    url: `/visitor/purpose-stats?month=${month}&year=${year}&officeCode=${officeCode}`,
+    method: "get",
+  });
+};
+
+export const useFetchPurposeStats = (
+  month,
+  year,
+  officeCode
+) => {
+  return useQuery({
+    queryKey: [
+      "visitors",
+      month,
+  year,
+  officeCode
+    ],
+    queryFn: () =>
+      fetchPurposeStats(month, year, officeCode),
+  });
+};

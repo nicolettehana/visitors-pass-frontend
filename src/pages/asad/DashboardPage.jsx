@@ -14,17 +14,13 @@ import {
   SimpleGrid,
   useDisclosure,
   Heading,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  RadioGroup,
-  Radio,
+  Box,
 } from "@chakra-ui/react";
 
-import { useExportVisitors } from "../../hooks/visitorQueries";
+import {
+  useExportVisitors,
+  useFetchPurposeStats,
+} from "../../hooks/visitorQueries";
 import { useFetchVisitors } from "../../hooks/visitorQueries";
 import VisitorsTableWrapper from "./VisitorsTableWrapper";
 import SearchInput from "../../components/core/SearchInput";
@@ -39,17 +35,23 @@ import { useFetchUsersProfile } from "../../hooks/userQueries";
 import { useFetchOffices } from "../../hooks/officeQueries";
 import OfficeFilter from "../../components/filter/OfficeFilter";
 import { useFetchStats } from "../../hooks/visitorQueries";
+import YearMonthFilter from "../../components/filter/YearMonthFIlter";
+import PurposeFilter from "../../components/filter/PurposeFilter";
+import VisitorPieChart from "../../components/charts/VisitorPieChart";
+import VisitorsBarChart from "../../components/charts/VisitorsBarChart";
 
 const DashboardPage = () => {
+  const currentDate = new Date();
+
   // States
   const [searchText, setSearchText] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [withPhoto, setWithPhoto] = useState(0);
-  const [month, setMonth] = useState(2);
-  const [year, setYear] = useState(2026);
-  const [officeCode, setOfficeCode] = useState('');
-  const [purpose, setPurpose] = useState('All');
+  const [month, setMonth] = useState(currentDate.getMonth() + 1);
+  const [year, setYear] = useState(currentDate.getFullYear());
+  const [officeCode, setOfficeCode] = useState("");
+  const [purpose, setPurpose] = useState("All");
   const [format, setFormat] = useState("PDF");
   const [startDate, setStartDate] = useState(
     dayjs().subtract(2, "months").startOf("M").format("YYYY-MM-DD"),
@@ -59,6 +61,14 @@ const DashboardPage = () => {
   );
   const { role } = useAuth();
 
+  const allPurposes = [
+    "To meet Minister",
+    "To meet Chief Secretary",
+    "To attend meeting/function",
+    "To meet officers",
+    "To visit Department",
+  ];
+
   // Hooks
   const [searchValue] = useDebounce(searchText, 300);
   const navigate = useNavigate();
@@ -66,7 +76,8 @@ const DashboardPage = () => {
   // Queries
   const officesQuery = useFetchOffices();
   const profileQuery = useFetchUsersProfile();
-  const statsQuery = useFetchStats(month, year,purpose,officeCode);
+  const statsQuery = useFetchStats(month, year, purpose, officeCode);
+  const purposeStatsQuery = useFetchPurposeStats(month, year, officeCode);
 
   const visitorsQuery = useFetchVisitors(
     searchValue,
@@ -74,7 +85,7 @@ const DashboardPage = () => {
     pageSize,
     startDate,
     endDate,
-    officeCode
+    officeCode,
   );
   const exportVisitorsMutation = useExportVisitors();
 
@@ -92,7 +103,7 @@ const DashboardPage = () => {
         endDate,
         format: format,
         withPhoto: withPhoto,
-        officeCode
+        officeCode,
       },
       {
         onSuccess: (response) => {
@@ -116,50 +127,89 @@ const DashboardPage = () => {
     );
   };
 
+  const apiData = purposeStatsQuery?.data?.data || [];
+
+  const pieData = allPurposes.map((purpose) => {
+    const found = apiData.find((item) => item.purpose === purpose);
+
+    return {
+      name: purpose,
+      value: found ? found.totalVisitors : 0,
+    };
+  });
+
   useEffect(() => {
-  if (
-    officesQuery?.data?.data?.length > 0 &&
-    !officeCode   // only if not already set
-  ) {
-    setOfficeCode(
-      officesQuery.data.data[0].officeCode.toString()
-    );
-  }
-}, [officesQuery?.data?.data]);
+    if (
+      officesQuery?.data?.data?.length > 0 &&
+      !officeCode // only if not already set
+    ) {
+      setOfficeCode(officesQuery.data.data[0].officeCode.toString());
+    }
+  }, [officesQuery?.data?.data]);
 
   return (
     <>
       {/* Main */}
       <Main>
         <Section>
-          
           <Container minW="full">
             <Stack spacing={4}>
               {/* Filter */}
-              
 
-              {/* Filters */}
-              {/* <HStack justifyContent="space-between" spacing={4}>
-                <PageSizing
-                  pageSize={pageSize}
-                  setPageSize={setPageSize}
-                  setPageNumber={setPageNumber}
-                />
-                <SearchInput
-                  searchText={searchText}
-                  setSearchText={setSearchText}
-                  setPageNumber={setPageNumber}
-                  w="fit-content"
-                />
-              </HStack> */}
+              <HStack justifyContent="space-between" spacing={2}>
+                <HStack>
+                  <VStack>
+                    <YearMonthFilter
+                      year={year}
+                      setYear={setYear}
+                      month={month}
+                      setMonth={setMonth}
+                      setPageNumber={setPageNumber}
+                    />
+                    <Heading size="sm">
+                      {profileQuery?.data?.data?.office}
+                    </Heading>
+                  </VStack>
+                  <OfficeFilter
+                    pageNumber={pageNumber}
+                    query={officesQuery}
+                    officeCode={officeCode}
+                    setOfficeCode={setOfficeCode}
+                  ></OfficeFilter>
+                  <PurposeFilter
+                    purpose={purpose}
+                    setPurpose={setPurpose}
+                    setPageNumber={setPageNumber}
+                  />
+                </HStack>
+              </HStack>
+              <Box
+                  flex="3"
+                  bg="gray.50"
+                  p={4}
+                  borderRadius="lg"
+                  boxShadow="md"
+                  border="1px solid"
+                  borderColor="gray.200"
+                >
+                  <VisitorsBarChart details={statsQuery?.data?.data?.details} />
+                </Box>
+              <HStack w="100%" spacing={4}>
+                
 
-              {/* Table */}
-              {/* <VisitorsTableWrapper
-                query={visitorsQuery}
-                searchText={searchText}
-                pageNumber={pageNumber}
-                setPageNumber={setPageNumber}
-              /> */}
+                <Box
+                  flex="1"
+                  bg="gray.50"
+                  p={4}
+                  h="400px"
+                  borderRadius="lg"
+                  boxShadow="md"
+                  border="1px solid"
+                  borderColor="gray.200"
+                >
+                  <VisitorPieChart data={pieData} />
+                </Box>
+              </HStack>
             </Stack>
           </Container>
         </Section>

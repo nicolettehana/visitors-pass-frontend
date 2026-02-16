@@ -70,7 +70,7 @@ const UpdateOfficeModal = ({ isOpen, onClose, officeCode, officeName}) => {
 
   // Submit handler
   const onSubmit = (values) => {
-    //console.log(values);
+    
     updateOffice.mutate(values);
   };
 
