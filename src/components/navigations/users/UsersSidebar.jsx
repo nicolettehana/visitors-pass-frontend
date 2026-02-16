@@ -47,10 +47,10 @@ const UsersSidebar = ({ profile }) => {
                 ? "/da/dashboard"
                 : profile?.role === "CH"
                 ? "/ch/dashboard"
-                : profile?.role === "CS"
-                ? "/cs/dashboard"
-                : profile?.role === "EST"
-                ? "/est/dashboard"
+                : profile?.role === "ASAD"
+                ? "/asad/visitors"
+                : profile?.role === "SAD"
+                ? "/sad/register"
                 : ""
             }
           >

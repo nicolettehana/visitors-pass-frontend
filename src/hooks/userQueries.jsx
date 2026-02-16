@@ -50,3 +50,37 @@ export const useVerifyChangeMobileOTP = (onSuccess, onError) => {
     onError,
   });
 };
+
+// POST: Create User
+const createUser = (data) => {
+  return request({
+    url: "/users/register",
+    method: "post",
+    data,
+  });
+};
+
+export const useCreateUser = (onSuccess, onError) => {
+  return useMutation({
+    mutationFn: createUser,
+    onSuccess,
+    onError,
+  });
+};
+
+// POST: Update User
+const updateUser = (data) => {
+  return request({
+    url: "/users/update",
+    method: "post",
+    data,
+  });
+};
+
+export const useUpdateUser = (onSuccess, onError) => {
+  return useMutation({
+    mutationFn: updateUser,
+    onSuccess,
+    onError,
+  });
+};

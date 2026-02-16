@@ -1,6 +1,6 @@
-import { useState } from "react";
-import Main from "../../../components/core/semantics/Main";
-import Section from "../../../components/core/semantics/Section";
+import { useState, useEffect } from "react";
+import Main from "../../components/core/semantics/Main";
+import Section from "../../components/core/semantics/Section";
 import {
   Button,
   Menu,
@@ -24,27 +24,28 @@ import {
   Radio,
 } from "@chakra-ui/react";
 
-import { useExportVisitors } from "../../../hooks/visitorQueries";
-import { useFetchVisitors } from "../../../hooks/visitorQueries";
+import { useExportVisitors } from "../../hooks/visitorQueries";
+import { useFetchVisitors } from "../../hooks/visitorQueries";
 import VisitorsTableWrapper from "./VisitorsTableWrapper";
-import SearchInput from "../../../components/core/SearchInput";
+import SearchInput from "../../components/core/SearchInput";
 import { useDebounce } from "use-debounce";
-import { PageSizing } from "../../../components/core/Table";
+import { PageSizing } from "../../components/core/Table";
 import { useNavigate } from "react-router-dom";
 import { FaFileDownload } from "react-icons/fa";
-import { useAuth } from "../../../components/auth/useAuth";
-import DateFilter from "../../../components/filter/DateFilter";
+import { useAuth } from "../../components/auth/useAuth";
+import DateFilter from "../../components/filter/DateFilter";
 import dayjs from "dayjs";
-import { useFetchUsersProfile } from "../../../hooks/userQueries";
+import { useFetchUsersProfile } from "../../hooks/userQueries";
+import { useFetchOffices } from "../../hooks/officeQueries";
+import OfficeFilter from "../../components/filter/OfficeFilter";
 
-
-const VisitorsPage = () => {
+const VisitorsAdminPage = () => {
   // States
   const [searchText, setSearchText] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [withPhoto, setWithPhoto] = useState(0);
-  const [officeCode, setOfficeCode] = useState("");
+  const [officeCode, setOfficeCode] = useState('');
   const [format, setFormat] = useState("PDF");
   const [startDate, setStartDate] = useState(
     dayjs().subtract(2, "months").startOf("M").format("YYYY-MM-DD"),
@@ -59,7 +60,7 @@ const VisitorsPage = () => {
   const navigate = useNavigate();
 
   // Queries
-
+  const officesQuery = useFetchOffices();
   const profileQuery = useFetchUsersProfile();
 
   const visitorsQuery = useFetchVisitors(
@@ -86,7 +87,7 @@ const VisitorsPage = () => {
         endDate,
         format: format,
         withPhoto: withPhoto,
-        
+        officeCode
       },
       {
         onSuccess: (response) => {
@@ -110,16 +111,29 @@ const VisitorsPage = () => {
     );
   };
 
+  useEffect(() => {
+  if (
+    officesQuery?.data?.data?.length > 0 &&
+    !officeCode   // only if not already set
+  ) {
+    setOfficeCode(
+      officesQuery.data.data[0].officeCode.toString()
+    );
+  }
+}, [officesQuery?.data?.data]);
+
   return (
     <>
       {/* Main */}
       <Main>
         <Section>
+          
           <Container minW="full">
             <Stack spacing={4}>
               {/* Filter */}
               <HStack justifyContent="space-between" spacing={2}>
-                <VStack spacing={7}>
+                <HStack>
+                <VStack >
                   <DateFilter
                     fromDate={startDate}
                     setFromDate={setStartDate}
@@ -131,6 +145,8 @@ const VisitorsPage = () => {
                     {profileQuery?.data?.data?.office}
                   </Heading>
                 </VStack>
+                <OfficeFilter pageNumber={pageNumber} query={officesQuery} officeCode={officeCode} setOfficeCode={setOfficeCode}></OfficeFilter>
+                </HStack>
 
                 <HStack>
                   <Menu>
@@ -231,4 +247,4 @@ const VisitorsPage = () => {
   );
 };
 
-export default VisitorsPage;
+export default VisitorsAdminPage;

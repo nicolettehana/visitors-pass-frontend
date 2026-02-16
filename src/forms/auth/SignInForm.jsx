@@ -66,13 +66,13 @@ const SignInForm = () => {
         case "ISS":
           navigate("/issue/dashboard");
           break;
-        case "PUR":
-          navigate("/purchase/dashboard");
+        case "ASAD":
+          navigate("/asad/visitors");
           break;
         case "ADMIN":
           navigate("/admin/logs");
         case "SAD":
-          navigate("/sad/dashboard");
+          navigate("/sad/register");
           break;
         default:
           break;

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Badge,
   Box,
@@ -11,6 +12,8 @@ import {
   Text,
   useToast,
   VStack,
+  Button,
+  useDisclosure
 } from "@chakra-ui/react";
 import {
   elementCounter,
@@ -27,6 +30,9 @@ import {
 import { MdOutlineTableChart } from "react-icons/md";
 import { useEnableDisableUsers } from "../../../hooks/adminQueries";
 import { useQueryClient } from "@tanstack/react-query";
+import { FaEdit } from "react-icons/fa";
+import { useFetchOffices } from "../../../hooks/officeQueries";
+import UpdateUserModal from "./UpdateUserModal";
 
 const ManageUsersTableWrapper = ({
   query,
@@ -89,11 +95,15 @@ const ManageUsersTableWrapper = ({
     );
   }
 
+  // States
+    const [rowState, setRowState] = useState({});
+
   // Hooks
   const toast = useToast();
 
   // Queries
   const queryClient = useQueryClient();
+  const officesQuery = useFetchOffices();
   const enableDisableQuery = useEnableDisableUsers(
     (response) => {
       queryClient.invalidateQueries({
@@ -122,11 +132,19 @@ const ManageUsersTableWrapper = ({
           "Oops! something went wrong. Couldn't enable/disable users.",
       });
       return error;
-    }
+    },
   );
+
+  //Disclosure
+  const updateUserDisclosure = useDisclosure();
 
   return (
     <Stack spacing={4}>
+      <UpdateUserModal
+        isOpen={updateUserDisclosure.isOpen}
+        onClose={updateUserDisclosure.onClose}
+        row={rowState}
+      />
       {/* Page Size */}
       <PageSizing
         pageSize={pageSize}
@@ -140,8 +158,9 @@ const ManageUsersTableWrapper = ({
           <Thead>
             <Tr>
               <Th>Sl. No.</Th>
+              <Th>Office</Th>
               <Th>Name & Username</Th>
-              <Th>Department & Designation</Th>
+              <Th>Designation & Department</Th>
               <Th>Email & Mobile No.</Th>
               <Th>Role</Th>
               <Th>Actions</Th>
@@ -162,6 +181,11 @@ const ManageUsersTableWrapper = ({
                     >
                       {elementCounter(index, query)}
                     </SkeletonText>
+                  </Td>
+                  <Td>
+                    {officesQuery?.data?.data?.find(
+                      (office) => office.officeCode === row?.officeCode,
+                    )?.officeName || "-"}
                   </Td>
 
                   <Td>
@@ -186,10 +210,10 @@ const ManageUsersTableWrapper = ({
                       fadeDuration={index}
                     >
                       <Stack spacing={0}>
-                        <Text>{row?.department}</Text>
                         <Text color="body" fontSize="sm">
                           {row?.designation}
                         </Text>
+                        <Text>{row?.department}</Text>
                       </Stack>
                     </SkeletonText>
                   </Td>
@@ -220,12 +244,10 @@ const ManageUsersTableWrapper = ({
                           row?.role === "USER"
                             ? "brand"
                             : row?.role === "ADMIN"
-                            ? "red"
-                            : row?.role === "CH"
-                            ? "orange"
-                            : row?.role === "EST"
-                            ? "green"
-                            : ""
+                              ? "red"
+                              : row?.role === "CH"
+                                ? "orange"
+                                : ""
                         }
                       >
                         {row?.role}
@@ -252,6 +274,20 @@ const ManageUsersTableWrapper = ({
                           }}
                         />
                       </LightMode>
+
+                      <Button
+                        variant="outline"
+                        minW="auto"
+                        //lineHeight="1"
+                        bg="brand.50"
+                        size="xs"
+                        onClick={() => {
+                          setRowState(row);
+                          updateUserDisclosure.onOpen();
+                        }}
+                      >
+                        <FaEdit />
+                      </Button>
                     </HStack>
                   </Td>
                 </Tr>

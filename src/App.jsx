@@ -14,6 +14,10 @@ import ForgotPasswordPage from "./pages/auth/forgotPassword/ForgotPasswordPage";
 import { AuthProvider } from "./components/auth/authContext";
 import CreateRegistrationPage from "./pages/sad/registration/CreateRegistrationPage";
 import VisitorsPage from "./pages/sad/visitors/VisitorsPage";
+import OfficesPage from "./pages/admin/offices/OfficesPage";
+import ASADRoutes from "./components/routes/ASADRoutes";
+import VisitorsAdminPage from "./pages/asad/VisitorsAdminPage";
+import DashboardPage from "./pages/asad/DashboardPage";
 
 const App = () => {
   return (
@@ -43,6 +47,17 @@ const App = () => {
           <Route path="profile" element={<UserProfilePage />} />
         </Route>
 
+        {/* ASAD ROUTES *******************************************************/}
+        <Route path="/asad" element={<ASADRoutes />}>
+          {/* Dashboard */}
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="visitors" element={<VisitorsAdminPage />} />
+          
+
+          {/* Profile */}
+          <Route path="profile" element={<UserProfilePage />} />
+        </Route>
+
         
 
         {/* ADMIN ROUTES ******************************************************** */}
@@ -52,6 +67,9 @@ const App = () => {
 
           {/* Manage Users */}
           <Route path="users" element={<AdminManageUsersPage />} />
+
+          {/* Manage Offices */}
+          <Route path="offices" element={<OfficesPage />} />
 
           {/* Profile */}
           <Route path="profile" element={<UserProfilePage />} />

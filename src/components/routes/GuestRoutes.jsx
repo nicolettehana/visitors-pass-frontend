@@ -41,8 +41,8 @@ const GuestRoutes = () => {
   if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "CH")
     return <Navigate to="/ch/dashboard" />;
 
-  if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "EST")
-    return <Navigate to="/est/dashboard" />;
+  if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "ASAD")
+    return <Navigate to="/asad/visitors" />;
 
   if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "SAD")
     return <Navigate to="/sad/register" />;

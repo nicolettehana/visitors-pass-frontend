@@ -8,9 +8,10 @@ const fetchVisitors = (
   pageSize,
   startDate,
   endDate,
+  officeCode
 ) => {
   return request({
-    url: `/visitor?page=${pageNumber}&size=${pageSize}&search=${searchValue}&startDate=${startDate}&endDate=${endDate}`,
+    url: `/visitor?page=${pageNumber}&size=${pageSize}&search=${searchValue}&startDate=${startDate}&endDate=${endDate}&officeCode=${officeCode}`,
     method: "get",
   });
 };
@@ -21,6 +22,7 @@ export const useFetchVisitors = (
   pageSize,
   startDate,
   endDate,
+  officeCode
 ) => {
   return useQuery({
     queryKey: [
@@ -30,9 +32,10 @@ export const useFetchVisitors = (
       pageSize,
       startDate,
       endDate,
+      officeCode
     ],
     queryFn: () =>
-      fetchVisitors(searchValue, pageNumber, pageSize, startDate, endDate),
+      fetchVisitors(searchValue, pageNumber, pageSize, startDate, endDate, officeCode),
   });
 };
 
@@ -87,11 +90,11 @@ export const useFetchVisitorPass = (visitorCode, enabled = true) => {
 };
 
 // GET: Export Visitors
-const exportVisitors = ({ format, startDate, endDate }) => {
+const exportVisitors = ({ format, startDate, endDate, withPhoto, officeCode }) => {
   return request({
     url: `/visitor/export`,
     method: "get",
-    params: { format, startDate, endDate },
+    params: { format, startDate, endDate, withPhoto, officeCode },
     responseType: "blob",
   });
 };
@@ -121,5 +124,37 @@ export const useFetchVisitorInformation = (mobileNo, enabled = true) => {
     queryKey: ["visitorInformation", mobileNo],
     queryFn: () => fetchVisitorInformation(mobileNo),
     enabled: !!mobileNo && enabled && mobileNo.length === 10,
+  });
+};
+
+// GET: Get Stats
+const fetchStats = (
+  month,
+  year,
+  purpose,
+  officeCode
+) => {
+  return request({
+    url: `/visitor/stats?month=${month}&year=${year}&purpose=${purpose}&officeCode=${officeCode}`,
+    method: "get",
+  });
+};
+
+export const useFetchStats = (
+  month,
+  year,
+  purpose,
+  officeCode
+) => {
+  return useQuery({
+    queryKey: [
+      "visitors",
+      month,
+  year,
+  purpose,
+  officeCode
+    ],
+    queryFn: () =>
+      fetchStats(month, year, purpose, officeCode),
   });
 };
