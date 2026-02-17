@@ -45,7 +45,7 @@ const VisitorsAdminPage = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [withPhoto, setWithPhoto] = useState(0);
-  const [officeCode, setOfficeCode] = useState('');
+  const [officeCode, setOfficeCode] = useState("");
   const [format, setFormat] = useState("PDF");
   const [startDate, setStartDate] = useState(
     dayjs().subtract(2, "months").startOf("M").format("YYYY-MM-DD"),
@@ -69,7 +69,7 @@ const VisitorsAdminPage = () => {
     pageSize,
     startDate,
     endDate,
-    officeCode
+    officeCode,
   );
   const exportVisitorsMutation = useExportVisitors();
 
@@ -87,7 +87,7 @@ const VisitorsAdminPage = () => {
         endDate,
         format: format,
         withPhoto: withPhoto,
-        officeCode
+        officeCode,
       },
       {
         onSuccess: (response) => {
@@ -112,40 +112,42 @@ const VisitorsAdminPage = () => {
   };
 
   useEffect(() => {
-  if (
-    officesQuery?.data?.data?.length > 0 &&
-    !officeCode   // only if not already set
-  ) {
-    setOfficeCode(
-      officesQuery.data.data[0].officeCode.toString()
-    );
-  }
-}, [officesQuery?.data?.data]);
+    if (
+      officesQuery?.data?.data?.length > 0 &&
+      !officeCode // only if not already set
+    ) {
+      setOfficeCode(officesQuery.data.data[0].officeCode.toString());
+    }
+  }, [officesQuery?.data?.data]);
 
   return (
     <>
       {/* Main */}
       <Main>
         <Section>
-          
           <Container minW="full">
             <Stack spacing={4}>
               {/* Filter */}
               <HStack justifyContent="space-between" spacing={2}>
                 <HStack>
-                <VStack >
-                  <DateFilter
-                    fromDate={startDate}
-                    setFromDate={setStartDate}
-                    toDate={endDate}
-                    setToDate={setEndDate}
-                    setPageNumber={setPageNumber}
-                  />
-                  <Heading size="sm">
-                    {profileQuery?.data?.data?.office}
-                  </Heading>
-                </VStack>
-                <OfficeFilter pageNumber={pageNumber} query={officesQuery} officeCode={officeCode} setOfficeCode={setOfficeCode}></OfficeFilter>
+                  <VStack>
+                    <DateFilter
+                      fromDate={startDate}
+                      setFromDate={setStartDate}
+                      toDate={endDate}
+                      setToDate={setEndDate}
+                      setPageNumber={setPageNumber}
+                    />
+                    <Heading size="sm">
+                      {profileQuery?.data?.data?.office}
+                    </Heading>
+                  </VStack>
+                  <OfficeFilter
+                    pageNumber={pageNumber}
+                    query={officesQuery}
+                    officeCode={officeCode}
+                    setOfficeCode={setOfficeCode}
+                  ></OfficeFilter>
                 </HStack>
 
                 <HStack>
@@ -169,6 +171,7 @@ const VisitorsAdminPage = () => {
                           <Button
                             colorScheme="blue"
                             onClick={handleExportVisitors}
+                            variant="brand"
                           >
                             Download {format}
                           </Button>

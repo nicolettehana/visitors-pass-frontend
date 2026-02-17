@@ -12,13 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { MdOutlineFilterList } from "react-icons/md";
 
-const YearMonthFilter = ({
-  year,
-  setYear,
-  month,
-  setMonth,
-  setPageNumber,
-}) => {
+const YearMonthFilter = ({ year, setYear, month, setMonth, setPageNumber }) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
@@ -26,7 +20,7 @@ const YearMonthFilter = ({
   // Years from 2025 → current
   const years = useMemo(() => {
     const arr = [];
-    for (let y = 2025; y <= currentYear; y++) {
+    for (let y = 2026; y <= currentYear; y++) {
       arr.push(y);
     }
     return arr;
@@ -51,7 +45,7 @@ const YearMonthFilter = ({
         w="fit-content"
       >
         <HStack>
-          <Text>Date:</Text>
+          <Text>Month:</Text>
           <Text color="red.700">
             {monthName} {year}
           </Text>
@@ -60,7 +54,6 @@ const YearMonthFilter = ({
 
       <MenuList minW="250px">
         <HStack align="start" p={2} spacing={4}>
-          
           {/* Year Selector */}
           <MenuOptionGroup
             title="Year"

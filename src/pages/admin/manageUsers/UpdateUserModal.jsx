@@ -103,7 +103,15 @@ const UpdateUserModal = ({ isOpen, onClose, row }) => {
 
   // Submit handler
   const onSubmit = (values) => {
-    
+    const publicKey = publicKeyQuery?.data?.data?.publicKey;
+    const formData = { ...values };
+
+    if (formData.mobileNo && /^[0-9]{10}$/.test(formData.mobileNo)) {
+      formData.mobileNo = encryptRSA(formData.mobileNo, publicKey);
+    } else {
+      formData.mobileNo = null;
+    }
+
     updateUser.mutate(values);
   };
 

@@ -15,8 +15,9 @@ import {
   useDisclosure,
   Heading,
   Box,
+  Text,
 } from "@chakra-ui/react";
-
+import { Badge } from "@chakra-ui/react";
 import {
   useExportVisitors,
   useFetchPurposeStats,
@@ -183,20 +184,24 @@ const DashboardPage = () => {
                   />
                 </HStack>
               </HStack>
+              <Text fontWeight="bold">
+                No. of Visitors: {statsQuery?.data?.data?.noOfVisitors}
+              </Text>
+              {/* <Text fontWeight="bold">
+                Average visitors per day: {statsQuery?.data?.data?.avgVisitors}
+              </Text> */}
               <Box
-                  flex="3"
-                  bg="gray.50"
-                  p={4}
-                  borderRadius="lg"
-                  boxShadow="md"
-                  border="1px solid"
-                  borderColor="gray.200"
-                >
-                  <VisitorsBarChart details={statsQuery?.data?.data?.details} />
-                </Box>
+                flex="3"
+                bg="gray.50"
+                p={4}
+                borderRadius="lg"
+                boxShadow="md"
+                border="1px solid"
+                borderColor="gray.200"
+              >
+                <VisitorsBarChart details={statsQuery?.data?.data?.details} />
+              </Box>
               <HStack w="100%" spacing={4}>
-                
-
                 <Box
                   flex="1"
                   bg="gray.50"

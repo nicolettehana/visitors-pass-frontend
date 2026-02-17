@@ -91,7 +91,13 @@ const UserProfilePage = () => {
               <Stack>
                 <SimpleGrid columns={2} gap={4}>
                   <Text color="body">Role</Text>
-                  <Text>{profileQuery?.data?.data?.role}</Text>
+                  <Text>
+                    {profileQuery?.data?.data?.role === "ADMIN"
+                      ? "SuperAdmin"
+                      : profileQuery?.data?.data?.role === "ASAD"
+                        ? "Admin"
+                        : "Security"}
+                  </Text>
                 </SimpleGrid>
 
                 <SimpleGrid columns={2} gap={4}>

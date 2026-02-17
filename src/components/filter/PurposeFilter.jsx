@@ -19,11 +19,7 @@ const PURPOSE_OPTIONS = [
   "To visit Department",
 ];
 
-const PurposeFilter = ({
-  purpose,
-  setPurpose,
-  setPageNumber,
-}) => {
+const PurposeFilter = ({ purpose, setPurpose, setPageNumber }) => {
   return (
     <Menu closeOnSelect={true}>
       <MenuButton
@@ -44,11 +40,13 @@ const PurposeFilter = ({
           type="radio"
           value={purpose || "All"}
           onChange={(value) => {
-            setPurpose(value === "All" ? "" : value);
+            setPurpose(value === "All" ? "All" : value);
             setPageNumber(0);
           }}
         >
-          <MenuItemOption value="All">All</MenuItemOption>
+          <MenuItemOption key={"All"} value="All">
+            All
+          </MenuItemOption>
 
           {PURPOSE_OPTIONS.map((option) => (
             <MenuItemOption key={option} value={option}>

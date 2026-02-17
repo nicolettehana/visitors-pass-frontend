@@ -13,7 +13,7 @@ import {
   useToast,
   VStack,
   Button,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   elementCounter,
@@ -96,7 +96,7 @@ const ManageUsersTableWrapper = ({
   }
 
   // States
-    const [rowState, setRowState] = useState({});
+  const [rowState, setRowState] = useState({});
 
   // Hooks
   const toast = useToast();
@@ -241,16 +241,20 @@ const ManageUsersTableWrapper = ({
                     >
                       <Badge
                         colorScheme={
-                          row?.role === "USER"
-                            ? "brand"
+                          row?.role === "ASAD"
+                            ? "orange"
                             : row?.role === "ADMIN"
                               ? "red"
-                              : row?.role === "CH"
-                                ? "orange"
+                              : row?.role === "SAD"
+                                ? "brand"
                                 : ""
                         }
                       >
-                        {row?.role}
+                        {row?.role === "ADMIN"
+                          ? "SuperAdmin"
+                          : row?.role === "ASAD"
+                            ? "Admin"
+                            : "Security"}
                       </Badge>
                     </SkeletonText>
                   </Td>

@@ -267,16 +267,19 @@ const RegistrationForm = () => {
     >
       {(formik) => {
         useEffect(() => {
-          if (visitorInfoQuery.data) {
+          if (visitorInfoQuery?.data?.data) {
             const lastVisit = visitorInfoQuery?.data?.data;
 
-            if (lastVisit.name) formik.setFieldValue("name", lastVisit.name);
-            if (lastVisit.address)
+            if (lastVisit.name && !formik.values.name)
+              formik.setFieldValue("name", lastVisit.name);
+            if (lastVisit.address && !formik.values.address)
               formik.setFieldValue("address", lastVisit.address);
-            if (lastVisit.state) formik.setFieldValue("state", lastVisit.state);
-            if (lastVisit.email) formik.setFieldValue("email", lastVisit.email);
+            if (lastVisit.state && !formik.values.state)
+              formik.setFieldValue("state", lastVisit.state);
+            if (lastVisit.email && !formik.values.email)
+              formik.setFieldValue("email", lastVisit.email);
           }
-        }, [visitorInfoQuery.data]);
+        }, [visitorInfoQuery?.data?.data]);
 
         return (
           <Stack as={Form} spacing={8}>

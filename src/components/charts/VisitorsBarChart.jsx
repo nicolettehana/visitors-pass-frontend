@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { Text } from "@chakra-ui/react";
 import {
   BarChart,
   Bar,
@@ -50,9 +51,7 @@ const CustomTooltip = ({ active, payload }) => {
 const VisitorsBarChart = ({ details = [] }) => {
   const sortedData = useMemo(() => {
     if (!Array.isArray(details)) return [];
-    return [...details].sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
-    );
+    return [...details].sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [details]);
 
   if (!sortedData.length) {
@@ -70,7 +69,6 @@ const VisitorsBarChart = ({ details = [] }) => {
         {/* XAxis shows date number + day letter */}
         <XAxis
           dataKey="date"
-          
           tickFormatter={(value) => {
             const dateObj = new Date(value);
             const dayNumber = dateObj.getDate();
@@ -82,7 +80,7 @@ const VisitorsBarChart = ({ details = [] }) => {
         <YAxis allowDecimals={false} />
         <Tooltip content={<CustomTooltip />} />
 
-        <Bar dataKey="totalNoOfVisitors" fill="#1a5515"  radius={[6, 6, 0, 0]} />
+        <Bar dataKey="totalNoOfVisitors" fill="#1a5515" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
