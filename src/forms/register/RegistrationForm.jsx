@@ -82,6 +82,8 @@ const RegistrationForm = () => {
     }
   }, [isOpen, pdfUrl]);
 
+  const titles = ["Shri", "Smti", "Kumari", "Mr.", "Mrs.", "Ms.", "Dr."];
+
   const indianStates = [
     "Andhra Pradesh",
     "Arunachal Pradesh",
@@ -174,6 +176,7 @@ const RegistrationForm = () => {
     email: "",
     dateTime: dayjs().format("YYYY-MM-DDTHH:mm"),
     photo: null,
+    title: "",
   };
 
   const validationSchema = yup.object({
@@ -185,11 +188,11 @@ const RegistrationForm = () => {
     state: yup.string().required("State is required"),
     address: yup.string().required("Address is required"),
     purpose: yup.string().required("Purpose is required"),
-    purposeDetails: yup.string("Purpose Details/Name is required"),
+    purposeDetails: yup.string().required("Purpose Details/Name is required"),
+    title: yup.string(),
     mobileNo: yup
       .string()
-      .matches(/^[0-9]{10}$/, "Invalid mobile number (10 digits)")
-      .required("Mobile no. is required"),
+      .matches(/^[0-9]{10}$/, "Invalid mobile number (10 digits)"),
     email: yup.string().email("Invalid email address"),
     dateTime: yup
       .date()
@@ -218,6 +221,7 @@ const RegistrationForm = () => {
       mobileNo: values.mobileNo,
       email: values.email,
       visitDateTime: dayjs(values.dateTime).format("YYYY-MM-DDTHH:mm:ss"),
+      title: values.title,
     };
 
     formData.append(
@@ -278,6 +282,8 @@ const RegistrationForm = () => {
               formik.setFieldValue("state", lastVisit.state);
             if (lastVisit.email && !formik.values.email)
               formik.setFieldValue("email", lastVisit.email);
+            if (lastVisit.title && !formik.values.title)
+              formik.setFieldValue("title", lastVisit.title);
           }
         }, [visitorInfoQuery?.data?.data]);
 
@@ -360,11 +366,26 @@ const RegistrationForm = () => {
             {/* Top Form Fields */}
             {/* <Text fontWeight="bold" fontSize="lg">Applicant Details:</Text> */}
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-              <InputField
-                name="name"
-                label="Applicant's Name"
-                placeholder="Enter name"
-              />
+              <SimpleGrid
+                templateColumns={{ base: "1fr", md: "1fr 3fr" }}
+                gap={4}
+              >
+                <SelectFieldSearchable
+                  name="title"
+                  label="Title"
+                  placeholder="Select Title"
+                  isRequired={false}
+                  options={titles.map((title) => ({
+                    value: title,
+                    label: title,
+                  }))}
+                />
+                <InputField
+                  name="name"
+                  label="Applicant's Name"
+                  placeholder="Enter name"
+                />
+              </SimpleGrid>
               <InputField
                 name="noOfVisitors"
                 label="No. of visitors"
@@ -402,6 +423,7 @@ const RegistrationForm = () => {
                 name="mobileNo"
                 label="Mobile No."
                 placeholder="Enter Mobile no."
+                isRequired={false}
                 onChange={(e) => {
                   let val = e.target.value.replace(/\D/g, ""); // only digits
                   if (val.length > 10) val = val.slice(0, 10);

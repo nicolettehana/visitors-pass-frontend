@@ -22,6 +22,7 @@ import {
   ModalFooter,
   RadioGroup,
   Radio,
+  Text,
 } from "@chakra-ui/react";
 
 import { useExportVisitors } from "../../../hooks/visitorQueries";
@@ -36,7 +37,6 @@ import { useAuth } from "../../../components/auth/useAuth";
 import DateFilter from "../../../components/filter/DateFilter";
 import dayjs from "dayjs";
 import { useFetchUsersProfile } from "../../../hooks/userQueries";
-
 
 const VisitorsPage = () => {
   // States
@@ -68,7 +68,7 @@ const VisitorsPage = () => {
     pageSize,
     startDate,
     endDate,
-    officeCode
+    officeCode,
   );
   const exportVisitorsMutation = useExportVisitors();
 
@@ -86,7 +86,6 @@ const VisitorsPage = () => {
         endDate,
         format: format,
         withPhoto: withPhoto,
-        
       },
       {
         onSuccess: (response) => {
@@ -127,9 +126,15 @@ const VisitorsPage = () => {
                     setToDate={setEndDate}
                     setPageNumber={setPageNumber}
                   />
-                  <Heading size="sm">
-                    {profileQuery?.data?.data?.office}
-                  </Heading>
+                  <HStack>
+                    <Heading size="sm">
+                      {profileQuery?.data?.data?.office}
+                    </Heading>
+                    <Text ml={20}>
+                      No. of Visitors:{" "}
+                      {visitorsQuery?.data?.data?.totalElements}
+                    </Text>
+                  </HStack>
                 </VStack>
 
                 <HStack>

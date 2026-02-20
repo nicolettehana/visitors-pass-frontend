@@ -18,6 +18,7 @@ import OfficesPage from "./pages/admin/offices/OfficesPage";
 import ASADRoutes from "./components/routes/ASADRoutes";
 import VisitorsAdminPage from "./pages/asad/VisitorsAdminPage";
 import DashboardPage from "./pages/asad/DashboardPage";
+import DashboardSADPage from "./pages/sad/DashboardSADPage";
 
 const App = () => {
   return (
@@ -33,7 +34,6 @@ const App = () => {
         <Route path="/auth" element={<AuthRoutes />}>
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
-          
         </Route>
 
         {/* SAD ROUTES *******************************************************/}
@@ -41,7 +41,7 @@ const App = () => {
           {/* Dashboard */}
           <Route path="register" element={<CreateRegistrationPage />} />
           <Route path="visitors" element={<VisitorsPage />} />
-          
+          <Route path="dashboard" element={<DashboardSADPage />} />
 
           {/* Profile */}
           <Route path="profile" element={<UserProfilePage />} />
@@ -52,13 +52,10 @@ const App = () => {
           {/* Dashboard */}
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="visitors" element={<VisitorsAdminPage />} />
-          
 
           {/* Profile */}
           <Route path="profile" element={<UserProfilePage />} />
         </Route>
-
-        
 
         {/* ADMIN ROUTES ******************************************************** */}
         <Route path="/admin" element={<AdminRoutes />}>
