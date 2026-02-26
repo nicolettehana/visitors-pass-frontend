@@ -158,6 +158,7 @@ const VisitorsPage = () => {
                           <Button
                             colorScheme="blue"
                             onClick={handleExportVisitors}
+                            variant="brand"
                           >
                             Download {format}
                           </Button>

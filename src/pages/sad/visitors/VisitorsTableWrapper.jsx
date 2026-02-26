@@ -141,8 +141,6 @@ const VisitorsTableWrapper = ({
   if (query.isSuccess && query?.data?.data?.content?.length === 0) {
     return (
       <Center py={16}>
-        
-
         <VStack spacing={4}>
           <Box
             bg="paperSecondary"
@@ -166,16 +164,16 @@ const VisitorsTableWrapper = ({
   return (
     <Stack spacing={4}>
       {selectedVisitorCode && (
-          <VisitorPassModal
-            visitorCode={selectedVisitorCode}
-            vPassNo={selectedVPassNo}
-            isOpen={isOpen}
-            onClose={() => {
-              onClose();
-              setSelectedVisitorCode(null);
-            }}
-          />
-        )}
+        <VisitorPassModal
+          visitorCode={selectedVisitorCode}
+          vPassNo={selectedVPassNo}
+          isOpen={isOpen}
+          onClose={() => {
+            onClose();
+            setSelectedVisitorCode(null);
+          }}
+        />
+      )}
       {selectedVisitorId && (
         <VisitorPhotoModal
           visitorCode={selectedVisitorId}
@@ -221,7 +219,9 @@ const VisitorsTableWrapper = ({
                     </SkeletonText>
                   </Td>
                   <Td>{row?.vpassNo}</Td>
-                  <Td>{row?.name}</Td>
+                  <Td>
+                    {row?.title} {row?.name}
+                  </Td>
                   <Td>{row?.noOfVisitors}</Td>
                   <Td>{row?.mobileNo}</Td>
                   <Td>
