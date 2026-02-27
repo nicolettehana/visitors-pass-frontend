@@ -326,6 +326,12 @@ const RegistrationForm = () => {
                       width="100%"
                       height="620px"
                       style={{ border: "none", backgroundColor: "#f8f9fa" }}
+                      onLoad={() => {
+                        if (iframeRef.current) {
+                          iframeRef.current.contentWindow?.focus();
+                          iframeRef.current.contentWindow?.print();
+                        }
+                      }}
                     />
                   ) : (
                     // <iframe

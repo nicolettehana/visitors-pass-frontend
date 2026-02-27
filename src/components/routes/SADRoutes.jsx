@@ -28,7 +28,7 @@ const SADRoutes = () => {
 
   // 2. Auth check finished → no valid session
   if (!role) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // 3. Logged in but wrong role
@@ -48,7 +48,7 @@ const SADRoutes = () => {
   // 5. Profile fetch failed → force logout
   if (profileQuery.isError) {
     logout();
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Optional strict check (uncomment if you want extra safety)

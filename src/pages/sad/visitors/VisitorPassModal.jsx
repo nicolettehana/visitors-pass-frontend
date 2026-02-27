@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -24,7 +24,6 @@ const VisitorPassModal = ({
   initialBlob,
 }) => {
   const [pdfUrl, setPdfUrl] = useState(null);
-  const iframeRef = useRef(null);
 
   const { data: fetchedBlob, isLoading } = useFetchVisitorPass(
     visitorCode,
@@ -32,21 +31,13 @@ const VisitorPassModal = ({
   );
 
   useEffect(() => {
-    if (!initialBlob && !fetchedBlob) return;
+    const blob = initialBlob || fetchedBlob;
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
 
-    let blob;
-
-    if (initialBlob) {
-      blob = initialBlob;
-    } else if (fetchedBlob) {
-      // If fetchedBlob is ArrayBuffer or Uint8Array
-      blob = new Blob([fetchedBlob], { type: "application/pdf" });
+      return () => URL.revokeObjectURL(url);
     }
-
-    const url = URL.createObjectURL(blob);
-    setPdfUrl(url);
-
-    return () => URL.revokeObjectURL(url);
   }, [initialBlob, fetchedBlob]);
 
   const handleDownload = () => {
@@ -58,17 +49,10 @@ const VisitorPassModal = ({
   };
 
   const handlePrint = () => {
-    if (!iframeRef.current) return;
-
-    iframeRef.current.contentWindow?.focus();
-    iframeRef.current.contentWindow?.print();
+    if (!pdfUrl) return;
+    const w = window.open(pdfUrl);
+    w?.print();
   };
-
-  // const handlePrint = () => {
-  //   if (!pdfUrl) return;
-  //   const w = window.open(pdfUrl);
-  //   w?.print();
-  // };
 
   return (
     <Modal
@@ -91,7 +75,6 @@ const VisitorPassModal = ({
             </Flex>
           ) : (
             <iframe
-              ref={iframeRef}
               src={pdfUrl}
               width="100%"
               height="620px"

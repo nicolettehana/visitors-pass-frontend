@@ -64,8 +64,24 @@ export const AuthProvider = ({ children }) => {
   });
 
   // Basic 401 → logout (you can later improve with refresh token)
+  // axiosClient.interceptors.response.use(
+  //   (res) => res,
+  //   (err) => {
+  //     if (err.response?.status === 401) {
+  //       logout();
+  //     }
+  //     return Promise.reject(err);
+  //   },
+  // );
+
   axiosClient.interceptors.response.use(
-    (res) => res,
+    (res) => {
+      // If responseType is blob, return only the data
+      if (res.config.responseType === "blob") {
+        return res.data;
+      }
+      return res; // default: return full response
+    },
     (err) => {
       if (err.response?.status === 401) {
         logout();
