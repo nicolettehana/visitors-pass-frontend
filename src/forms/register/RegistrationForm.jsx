@@ -1,5 +1,5 @@
 import { Form, Formik, FieldArray, Field } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import * as yup from "yup";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -58,15 +58,22 @@ const RegistrationForm = () => {
   };
 
   const handlePrint = () => {
-    if (!pdfUrl) return;
-    const printWindow = window.open(pdfUrl, "_blank");
-    if (printWindow) {
-      printWindow.onload = () => {
-        printWindow.focus();
-        printWindow.print();
-      };
-    }
+    if (!iframeRef.current) return;
+
+    iframeRef.current.contentWindow?.focus();
+    iframeRef.current.contentWindow?.print();
   };
+
+  // const handlePrint = () => {
+  //   if (!pdfUrl) return;
+  //   const printWindow = window.open(pdfUrl, "_blank");
+  //   if (printWindow) {
+  //     printWindow.onload = () => {
+  //       printWindow.focus();
+  //       printWindow.print();
+  //     };
+  //   }
+  // };
 
   useEffect(() => {
     return () => {
@@ -134,6 +141,7 @@ const RegistrationForm = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const iframeRef = useRef(null);
 
   const profileQuery = useFetchUsersProfile();
 
@@ -312,6 +320,7 @@ const RegistrationForm = () => {
                 <ModalBody p={0}>
                   {pdfUrl ? (
                     <iframe
+                      ref={iframeRef}
                       src={pdfUrl}
                       title="Visitor Pass PDF"
                       width="100%"
@@ -319,6 +328,13 @@ const RegistrationForm = () => {
                       style={{ border: "none", backgroundColor: "#f8f9fa" }}
                     />
                   ) : (
+                    // <iframe
+                    //   src={pdfUrl}
+                    //   title="Visitor Pass PDF"
+                    //   width="100%"
+                    //   height="620px"
+                    //   style={{ border: "none", backgroundColor: "#f8f9fa" }}
+                    // />
                     <Flex
                       height="500px"
                       align="center"

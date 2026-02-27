@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -16,8 +16,15 @@ import {
 import dayjs from "dayjs";
 import { useFetchVisitorPass } from "../../../hooks/visitorQueries";
 
-const VisitorPassModal = ({ isOpen, onClose, visitorCode, vPassNo, initialBlob }) => {
+const VisitorPassModal = ({
+  isOpen,
+  onClose,
+  visitorCode,
+  vPassNo,
+  initialBlob,
+}) => {
   const [pdfUrl, setPdfUrl] = useState(null);
+  const iframeRef = useRef(null);
 
   const { data: fetchedBlob, isLoading } = useFetchVisitorPass(
     visitorCode,
@@ -25,13 +32,21 @@ const VisitorPassModal = ({ isOpen, onClose, visitorCode, vPassNo, initialBlob }
   );
 
   useEffect(() => {
-    const blob = initialBlob || fetchedBlob;
-    if (blob) {
-      const url = URL.createObjectURL(blob);
-      setPdfUrl(url);
+    if (!initialBlob && !fetchedBlob) return;
 
-      return () => URL.revokeObjectURL(url);
+    let blob;
+
+    if (initialBlob) {
+      blob = initialBlob;
+    } else if (fetchedBlob) {
+      // If fetchedBlob is ArrayBuffer or Uint8Array
+      blob = new Blob([fetchedBlob], { type: "application/pdf" });
     }
+
+    const url = URL.createObjectURL(blob);
+    setPdfUrl(url);
+
+    return () => URL.revokeObjectURL(url);
   }, [initialBlob, fetchedBlob]);
 
   const handleDownload = () => {
@@ -43,10 +58,17 @@ const VisitorPassModal = ({ isOpen, onClose, visitorCode, vPassNo, initialBlob }
   };
 
   const handlePrint = () => {
-    if (!pdfUrl) return;
-    const w = window.open(pdfUrl);
-    w?.print();
+    if (!iframeRef.current) return;
+
+    iframeRef.current.contentWindow?.focus();
+    iframeRef.current.contentWindow?.print();
   };
+
+  // const handlePrint = () => {
+  //   if (!pdfUrl) return;
+  //   const w = window.open(pdfUrl);
+  //   w?.print();
+  // };
 
   return (
     <Modal
@@ -69,6 +91,7 @@ const VisitorPassModal = ({ isOpen, onClose, visitorCode, vPassNo, initialBlob }
             </Flex>
           ) : (
             <iframe
+              ref={iframeRef}
               src={pdfUrl}
               width="100%"
               height="620px"

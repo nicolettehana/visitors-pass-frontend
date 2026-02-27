@@ -1,76 +1,56 @@
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-const client = axios.create({
-  // withCredentials: true,
-  baseURL: BASE_URL,
-  headers: {
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-  },
-});
+export const createRequestClient = (auth) => {
+  const client = axios.create({
+    baseURL: BASE_URL,
+  });
 
-export const request = async ({ ...option }) => {
-  const accessToken = localStorage.getItem("access_token");
-  const refreshToken = localStorage.getItem("refresh_token");
-
-  if (accessToken) {
-    client.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const onSuccess = (response) => {
-    if (option.responseType === "blob") {
-      return response.data;
+  // Attach access token from memory
+  client.interceptors.request.use((config) => {
+    if (auth.accessToken) {
+      config.headers.Authorization = `Bearer ${auth.accessToken}`;
     }
-    return response;
-  };
-  const onError = async (error) => {
-    // Error handling
-    if (
-      error.response.status === 401 &&
-      error.response.data.message === "JWT token has expired"
-    ) {
-      await axios
-        .get(BASE_URL + "/auth/refresh-token", {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-            "API-Key": API_KEY,
-            "Referrer-Policy": "strict-origin-when-cross-origin",
-          },
-        })
-        .then((response) => {
-          localStorage.setItem("access_token", response.data.access_token);
-          localStorage.setItem("refresh_token", response.data.refresh_token);
-          localStorage.setItem("role", response.data.role);
-        })
-        .catch(async (err) => {
-          await axios
-            .get(BASE_URL + "/auth/logout", {
-              withCredentials: true,
-              headers: {
-                "API-Key": API_KEY,
-                "Referrer-Policy": "strict-origin-when-cross-origin",
-              },
-            })
-            .then(() => {
-              window.location.href = FRONTEND_URL;
-              localStorage.removeItem("access_token");
-              localStorage.removeItem("refresh_token");
-              localStorage.removeItem("role");
-            });
-          return err;
-        });
-    }
+    return config;
+  });
 
-    throw error;
-  };
-  if (option.data instanceof FormData) {
-    // Let Axios set multipart headers automatically
-    delete client.defaults.headers.common["Content-Type"];
-  }
+  // Handle 401 refresh
+  client.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (
+        error.response?.status === 401 &&
+        error.response?.data?.message === "JWT token has expired"
+      ) {
+        try {
+          const refreshToken = sessionStorage.getItem("refresh_token");
 
-  return await client(option).then(onSuccess).catch(onError);
+          const response = await axios.get(BASE_URL + "/auth/refresh-token", {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+              "API-Key": API_KEY,
+            },
+          });
+
+          // Update tokens properly
+          auth.setAccessToken(response.data.access_token);
+          sessionStorage.setItem("refresh_token", response.data.refresh_token);
+
+          // Retry original request
+          error.config.headers.Authorization = `Bearer ${response.data.access_token}`;
+
+          return client(error.config);
+        } catch (err) {
+          auth.logout();
+          return Promise.reject(err);
+        }
+      }
+
+      return Promise.reject(error);
+    },
+  );
+
+  return client;
 };
