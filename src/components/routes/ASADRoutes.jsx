@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { Center, Spinner, Stack, useDisclosure } from "@chakra-ui/react";
 import ScrollToTop from "./ScrollToTop";
@@ -7,15 +6,38 @@ import { useFetchUsersProfile } from "../../hooks/userQueries";
 import UsersSidebarDrawer from "../navigations/users/UsersSidebarDrawer";
 import UsersSidebar from "../navigations/users/UsersSidebar";
 import UsersNavbar from "../navigations/users/UsersNavbar";
+import { useAuthContext } from "../auth/authContext";
 
 const ASADRoutes = () => {
-  // Disclosures
-  const logout = useDisclosure();
+  const logoutModal = useDisclosure();
   const drawer = useDisclosure();
+  const { role, isAuthLoading, logout } = useAuthContext();
 
-  // Queries
-  const profileQuery = useFetchUsersProfile();
+  // Only fetch profile after auth is restored and role matches
+  const profileQuery = useFetchUsersProfile({
+    enabled: !isAuthLoading && role === "ASAD",
+  });
 
+  // 1️⃣ Still restoring session
+  if (isAuthLoading) {
+    return (
+      <Center minH="100dvh">
+        <Spinner thickness="4px" size="xl" color="brand.600" />
+      </Center>
+    );
+  }
+
+  // 2️⃣ No valid session
+  if (!role) {
+    return <Navigate to="/" replace />;
+  }
+
+  // 3️⃣ Logged in but wrong role
+  if (role !== "ASAD") {
+    return <Navigate to="/" replace />;
+  }
+
+  // 4️⃣ Wait for profile verification
   if (profileQuery.isPending) {
     return (
       <Center minH="100dvh">
@@ -24,34 +46,40 @@ const ASADRoutes = () => {
     );
   }
 
+  // 5️⃣ Profile fetch failed → force logout
   if (profileQuery.isError) {
-    return <Navigate to="/" />;
+    logout();
+    return <Navigate to="/" replace />;
   }
 
-  if (profileQuery.isSuccess && profileQuery?.data?.data?.role !== "ASAD") {
-    return <Navigate to="/" />;
-  }
+  // Optional strict backend role verification
+  // if (profileQuery.data?.data?.role !== "ASAD") {
+  //   logout();
+  //   return <Navigate to="/" replace />;
+  // }
+
+  const profile = profileQuery.data?.data;
 
   return (
     <>
       <ScrollToTop />
       <UsersSidebarDrawer isOpen={drawer.isOpen} onClose={drawer.onClose} />
-      <LogoutForm isOpen={logout.isOpen} onClose={logout.onClose} />
+      <LogoutForm isOpen={logoutModal.isOpen} onClose={logoutModal.onClose} />
 
       <Stack minH="100dvh" justifyContent="space-between" spacing={8}>
         <Stack direction="row" spacing={0}>
-          <UsersSidebar profile={profileQuery?.data?.data} />
+          <UsersSidebar profile={profile} />
           <Stack spacing={4} w="full" ml={{ base: 0, lg: 64 }}>
             <UsersNavbar
               onOpen={drawer.onOpen}
-              openLogout={logout.onOpen}
-              profile={profileQuery?.data?.data}
+              openLogout={logoutModal.onOpen}
+              profile={profile}
             />
             <Outlet />
             <div />
           </Stack>
         </Stack>
-        {/* Footer Here */}
+        {/* Footer here */}
       </Stack>
     </>
   );

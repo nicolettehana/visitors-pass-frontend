@@ -77,7 +77,7 @@ const VisitorsPage = () => {
 
   //Handlers
 
-  const handleExportVisitors = (exportFormat) => {
+  const handleExportVisitors = () => {
     const extension = format === "PDF" ? "pdf" : "xlsx";
 
     exportVisitorsMutation.mutate(
@@ -88,18 +88,38 @@ const VisitorsPage = () => {
         withPhoto: withPhoto,
       },
       {
+        // onSuccess: (response) => {
+        //   const url = window.URL.createObjectURL(new Blob([response]));
+        //   const mimeType =
+        //     exportFormat === "PDF"
+        //       ? "application/pdf"
+        //       : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+        //   const blob = new Blob([response], { type: mimeType });
+
+        //   const link = document.createElement("a");
+        //   link.href = url;
+        //   link.download = `Visitors_${startDate}-${endDate}.${extension}`;
+        //   link.click();
+        //   link.remove();
+
+        //   onClose();
+        // },
         onSuccess: (response) => {
-          const url = window.URL.createObjectURL(new Blob([response]));
+          console.log("Seuccess");
           const mimeType =
-            exportFormat === "PDF"
+            format === "PDF"
               ? "application/pdf"
               : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
           const blob = new Blob([response], { type: mimeType });
 
+          const url = window.URL.createObjectURL(blob);
+
           const link = document.createElement("a");
           link.href = url;
           link.download = `Visitors_${startDate}-${endDate}.${extension}`;
+          document.body.appendChild(link);
           link.click();
           link.remove();
 

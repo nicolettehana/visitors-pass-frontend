@@ -191,6 +191,8 @@ const RegistrationForm = () => {
     name: yup.string().required("Name is required"),
     noOfVisitors: yup
       .number()
+      .min(1, "At least 1 visitor is required")
+      .max(50, "Maximum 50 visitors allowed")
       .typeError("Please enter a valid number")
       .required("No. of visitors is required"),
     state: yup.string().required("State is required"),

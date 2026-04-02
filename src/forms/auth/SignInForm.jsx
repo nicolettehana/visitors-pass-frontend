@@ -47,12 +47,6 @@ const SignInForm = () => {
 
       // Role-based navigation
       switch (role) {
-        case "USER":
-          navigate("/user/dashboard", { replace: true });
-          break;
-        case "ISS":
-          navigate("/issue/dashboard", { replace: true });
-          break;
         case "ASAD":
           navigate("/asad/dashboard", { replace: true });
           break;
@@ -100,6 +94,7 @@ const SignInForm = () => {
       .matches(/(?=.*\d)/, "At least 1 number")
       .matches(/(?=.*[#^@$!%*?&])/, "At least 1 special character")
       .required("Password is required"),
+    //captcha: yup.string(),
     captcha: yup.string().required("Captcha is required"),
     captchaToken: yup.string().required("Captcha token is required"),
   });
@@ -163,6 +158,7 @@ const SignInForm = () => {
             name="captcha"
             label="Captcha"
             placeholder="Enter the text from the image"
+            //isRequired={false}
           />
 
           <Button

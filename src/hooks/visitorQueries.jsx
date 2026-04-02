@@ -302,7 +302,11 @@ const exportVisitors = (axiosClient, params) => {
 
 export const useExportVisitors = () => {
   const { axiosClient } = useAuthContext();
-  return useMutation((params) => exportVisitors(axiosClient, params));
+
+  //return useMutation((params) => exportVisitors(axiosClient, params));
+  return useMutation({
+    mutationFn: (params) => exportVisitors(axiosClient, params),
+  });
 };
 
 /**

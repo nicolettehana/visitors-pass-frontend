@@ -14,7 +14,7 @@ import { CacheProvider } from "@emotion/react";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
+  import.meta.url,
 ).toString();
 
 // QueryClient
@@ -36,5 +36,5 @@ createRoot(document.getElementById("root")).render(
         </CacheProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );
