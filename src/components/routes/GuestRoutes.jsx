@@ -27,13 +27,13 @@ const GuestRoutes = () => {
   // Queries
   const profileQuery = useFetchUsersProfile();
 
-  if (profileQuery.isPending) {
-    return (
-      <Center minH="100dvh">
-        <Spinner thickness="4px" size="xl" color="brand.600" />
-      </Center>
-    );
-  }
+  // if (profileQuery.isPending) {
+  //   return (
+  //     <Center minH="100dvh">
+  //       <Spinner thickness="4px" size="xl" color="brand.600" />
+  //     </Center>
+  //   );
+  // }
 
   if (profileQuery.isSuccess && profileQuery?.data?.data?.role === "USER")
     return <Navigate to="/user/dashboard" />;

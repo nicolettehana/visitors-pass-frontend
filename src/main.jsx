@@ -28,6 +28,7 @@ const emotionCache = createCache({
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
+      {/* <BrowserRouter basename="/epass"> */}
       <BrowserRouter>
         <CacheProvider value={emotionCache}>
           <ChakraProvider theme={theme}>
