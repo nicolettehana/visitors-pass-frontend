@@ -340,6 +340,42 @@ export const useGetOTPSignUp = (onSuccess, onError) => {
 
 /**
  * ----------------------------
+ * POST: Send OTP Sign In
+ * ----------------------------
+ */
+export const useGetOTPSignIn = (onSuccess, onError) => {
+  const { axiosClient } = useAuthContext();
+
+  return useMutation({
+    mutationFn: (data) =>
+      axiosClient.post("/auth/get-otp", data, {
+        headers: { "API-Key": API_KEY },
+      }),
+    onSuccess,
+    onError,
+  });
+};
+
+/**
+ * ----------------------------
+ * POST: Verify OTP Sign In
+ * ----------------------------
+ */
+export const useVerifyOTPSignIn = (onSuccess, onError) => {
+  const { axiosClient } = useAuthContext();
+
+  return useMutation({
+    mutationFn: (data) =>
+      axiosClient.post("/auth/verify-otp", data, {
+        headers: { "API-Key": API_KEY },
+      }),
+    onSuccess,
+    onError,
+  });
+};
+
+/**
+ * ----------------------------
  * POST: Verify OTP Sign Up
  * ----------------------------
  */

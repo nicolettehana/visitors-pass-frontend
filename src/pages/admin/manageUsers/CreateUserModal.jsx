@@ -108,7 +108,6 @@ const CreateUserModal = ({ isOpen, onClose }) => {
 
   // Submit handler
   const onSubmit = (values) => {
-  
     const publicKey = publicKeyQuery?.data?.data?.publicKey;
     const formData = { ...values };
 
@@ -118,11 +117,9 @@ const CreateUserModal = ({ isOpen, onClose }) => {
       formData.mobileNo = null;
     }
     formData.password = encryptRSA(formData.password, publicKey);
-    
+
     createUser.mutate(formData);
   };
-
-  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="2xl" isCentered>
@@ -149,6 +146,7 @@ const CreateUserModal = ({ isOpen, onClose }) => {
                   >
                     <option value="SAD">Security Personnel</option>
                     <option value="ASAD">Admin</option>
+                    <option value="PA">Personal Assistant</option>
                   </SelectField>
                   {values.role === "SAD" && (
                     <SelectField

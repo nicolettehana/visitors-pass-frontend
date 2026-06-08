@@ -19,6 +19,7 @@ import ASADRoutes from "./components/routes/ASADRoutes";
 import VisitorsAdminPage from "./pages/asad/VisitorsAdminPage";
 import DashboardPage from "./pages/asad/DashboardPage";
 import DashboardSADPage from "./pages/sad/DashboardSADPage";
+import VisitorLoginPage from "./pages/home/VisitorLoginPage";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         {/* GUEST ROUTES **********************************************************/}
         <Route path="/" element={<GuestRoutes />}>
           <Route index element={<HomePage />} />
+          <Route path="/login" element={<VisitorLoginPage />} />
           <Route path="contact-us" element={<ContactUsPage />} />
         </Route>
 
